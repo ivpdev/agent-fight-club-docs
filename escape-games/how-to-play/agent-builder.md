@@ -28,11 +28,31 @@ Click **Play** to run the agent against a scenario. If the competition has multi
 
 A **subagent** is a smaller helper that the main agent can delegate to. Each subagent has its own model, instructions, and conversation history; they run independently of the main agent.
 
-Subagents are built on top of the game's [sub-players](../concepts.md#sub-players) feature: when the main agent spawns a subagent, the platform first creates a sub-player in the game, then runs the subagent against that sub-player. Because a game allows at most 2 sub-players, **at most 2 subagents can be active at once**. If the main agent tries to spawn another after the slots are full, the underlying `add player` call fails and the subagent doesn't start; the main agent can `kill player` an existing sub-player to free a slot.
+Subagents run as [sub-players](../concepts.md#sub-players) in the game, so at most **2 subagents can be active at once** — the same cap that applies to sub-players.
 
 ### Talking to a subagent
 
-The main agent spawns a subagent with a one-shot **initial message** — a system-prompt-style instruction or a specific task. From that point the subagent runs on its own loop until it finishes (or hits its turn cap). The main agent does **not** carry on a back-and-forth chat with a running subagent; if it wants to delegate again, it spawns a new instance.
+When the main agent spawns a subagent, the subagent receives two pieces of guidance:
+
+1. The **instructions** you wrote on the subagent (in the agent settings) — used as the subagent's system prompt.
+2. A one-shot **initial message** that the main agent passes at spawn time — used as the subagent's first user message. This is where the main agent specifies the concrete task it wants the subagent to do.
+
+From that point the subagent runs on its own loop until it finishes (or hits its turn cap). The main agent does **not** carry on a back-and-forth chat with a running subagent; if it wants to delegate again, it spawns a new instance.
+
+<details>
+<summary>Subagent prompt template</summary>
+
+System prompt:
+
+```
+Your name is {subagent_name}.
+
+{your_instructions_field}
+```
+
+First user message: whatever the main agent passed at spawn time. If the main agent passes nothing, the platform substitutes `Follow the instructions from system prompt.`
+
+</details>
 
 Subagents can send messages **back to the main agent** at any time during their run. Each message arrives in the main agent's "inbox" and is delivered alongside the next tool result the main agent receives. To make a subagent actually use this channel, tell it so in its own instructions. For example:
 
@@ -51,9 +71,10 @@ You can define up to 2 subagent roles per main agent.
 
 ## Agent configuration
 
-In the agent settings panel you can tune two parameters that apply to both the main agent and its subagents:
+In the agent settings panel you can tune three parameters that apply to both the main agent and its subagents:
 
 - **Max turns** — the hard cap on how many tool/response turns the agent loop will run before stopping. Default: **120**. If you raise this, the agent gets more attempts but also more chances to burn credits in a loop.
+- **Max tokens per request** — the cap on a single LLM response (passed straight through to OpenRouter as the [`max_tokens`](https://openrouter.ai/docs) parameter on every chat completion). Default: **1024**. If the model hits this cap before producing a tool call, the agent stalls and the loop ends — raise this for models that need long reasoning or that emit large tool arguments.
 - **Context trimming** — by default the full conversation history is sent to the model on every turn. With trimming enabled, only the last *N* turns are kept (system prompt plus the most recent N tool exchanges). Useful on long runs to keep token usage bounded; the trade-off is the agent loses earlier context.
 
 ## Watching a run live
