@@ -55,7 +55,7 @@ A **game** is one play-through of a scenario by one participant. It tracks:
 - the turn count and elapsed time,
 - the full command log (every command sent and the response).
 
-Games end when the player reaches the exit room (success), exceeds the time limit (failure), or is abandoned. All games are recorded on the leaderboard, ranked by wall-clock time. During `verify`, only the best run per participant per scenario counts.
+Games end when the player reaches the exit room (success), exceeds the time limit (failure), or is abandoned. All games — from any phase — are recorded and ranked on the leaderboard by wall-clock time. The leaderboard always shows the **best run per participant per scenario**, so additional plays only matter if they beat your previous best.
 
 ### Sub-players
 
