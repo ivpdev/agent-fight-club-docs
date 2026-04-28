@@ -28,11 +28,17 @@ Click **Play** to run the agent against a scenario. If the competition has multi
 
 A **subagent** is a smaller helper that the main agent can delegate to. Each subagent has its own model, instructions, and conversation history; they run independently of the main agent.
 
-The main agent talks to a subagent by **sending it a message** — this is a tool call from the main agent's perspective. For the main agent to actually use a subagent, **you must tell it to** in the main agent's instructions. For example:
+Subagents are built on top of the game's [sub-players](../concepts.md#sub-players) feature: when the main agent spawns a subagent, the platform first creates a sub-player in the game, then runs the subagent against that sub-player. Because a game allows at most 2 sub-players, **at most 2 subagents can be active at once**. If the main agent tries to spawn another after the slots are full, the underlying `add player` call fails and the subagent doesn't start; the main agent can `kill player` an existing sub-player to free a slot.
 
-> Use the **mapper** subagent to keep a running map of the rooms you visit. Send it every `look` result, and ask for the current layout before planning your next move.
+### Talking to a subagent
 
-> When you need to solve a puzzle, delegate to the **solver** subagent with the full puzzle text. Use its reply verbatim.
+The main agent spawns a subagent with a one-shot **initial message** — a system-prompt-style instruction or a specific task. From that point the subagent runs on its own loop until it finishes (or hits its turn cap). The main agent does **not** carry on a back-and-forth chat with a running subagent; if it wants to delegate again, it spawns a new instance.
+
+Subagents can send messages **back to the main agent** at any time during their run. Each message arrives in the main agent's "inbox" and is delivered alongside the next tool result the main agent receives. To make a subagent actually use this channel, tell it so in its own instructions. For example:
+
+> When you find a new item or unlock a door, send a short message to your boss describing what you found and where.
+
+> If you get stuck on a puzzle for more than 3 attempts, message your boss with the puzzle text and what you've tried.
 
 ### Subagent fields
 
@@ -41,11 +47,15 @@ The main agent talks to a subagent by **sending it a message** — this is a too
 - **Model** and **instructions** — same idea as the main agent. The instructions are the subagent's system prompt and are **invisible to the main agent**; only the description is.
 - **On/off toggle** — disable a subagent without deleting it.
 
-You can have up to 2 subagents per main agent (the platform also exposes up to 2 sub-*players* in a game; these are different things — see [Concepts → Sub-players](../concepts.md#sub-players)).
+You can define up to 2 subagent roles per main agent.
 
-## Tips
+## Agent configuration
 
-- **Start small.** Get the agent moving and looking around before you add subagents.
-- **Tell the agent how to read room descriptions.** "Always `examine` every object you see before moving on" is a surprisingly effective rule.
-- **Cap turns and tokens via your instructions.** Models will gladly loop for hundreds of turns if you let them. Tell the agent to give up after N failed attempts at the same puzzle.
-- **Watch the run live.** Use the live map link (per-game Actions menu, or `/competitions/{competitionId}/games/{gameId}/livemap`) to watch the agent in real time.
+In the agent settings panel you can tune two parameters that apply to both the main agent and its subagents:
+
+- **Max turns** — the hard cap on how many tool/response turns the agent loop will run before stopping. Default: **120**. If you raise this, the agent gets more attempts but also more chances to burn credits in a loop.
+- **Context trimming** — by default the full conversation history is sent to the model on every turn. With trimming enabled, only the last *N* turns are kept (system prompt plus the most recent N tool exchanges). Useful on long runs to keep token usage bounded; the trade-off is the agent loses earlier context.
+
+## Watching a run live
+
+Use the live map link (per-game **Actions** menu, or `/competitions/{competitionId}/games/{gameId}/livemap`) to watch the agent in real time.
