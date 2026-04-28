@@ -17,10 +17,22 @@ The lifecycle is driven by the **admin** (the user who created the competition).
 - **verify** — scoring phase. Verify scenarios unlock. Each verify scenario has a per-participant **game limit** (typically 3) — only the best run counts. Build scenarios remain playable but still don't count.
 - **closed** — competition is over. The leaderboard is frozen; no new games can be played.
 
+### Visibility
+
+A competition is either **public** or **private**:
+
+- **public** — listed for everyone in the competitions list and joinable with a single click. **Only platform superadmins can create public competitions.**
+- **private** — created by any user; not listed publicly. Joined via an **invite link** of the form `https://<host>/invite/<short-code>`. The link is created automatically with the competition and can be regenerated, disabled, or re-enabled by the competition's admin or any superadmin. Disabling the link blocks new joins (existing participants are unaffected). Regenerating issues a new code and immediately invalidates the previous one.
+
 ### Roles
 
-- **Admin** — the user who created the competition. Manages participants, scenarios, and the lifecycle. Sees every game from every participant.
-- **Participant** — a user added to the competition (by the admin, or via self-join for public competitions during `build`). Sees only their own games and the public leaderboard.
+- **Superadmin** — a platform-wide role (configured by email allowlist). Can create public competitions, has admin rights on every competition, and can manage anyone's invite links.
+- **Admin** — the user who created the competition. Manages participants, scenarios, the lifecycle, and the invite link. Sees every game from every participant.
+- **Participant** — a user who joined the competition (by self-join for public competitions, by invite link for private ones, or added directly by an admin). Sees only their own games and the public leaderboard.
+
+Participants and admins are separate roles — a user can be both at once. The unified competitions list shows an **Open as admin** action on rows you administer alongside the regular row click that opens the participant view.
+
+> Email addresses are not displayed on competition pages. Participants are identified by their display name, with their user id as a fallback when no name is set.
 
 ## Scenario
 

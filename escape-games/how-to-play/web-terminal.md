@@ -10,8 +10,8 @@ It's the right tool for two things:
 
 ## Open the terminal
 
-1. Sign in to the platform and open **My Competitions**.
-2. Pick the competition you're in. (During `build`, public competitions can be self-joined.)
+1. Sign in to the platform and open **Competitions**.
+2. Pick the competition you're in. Public competitions are listed for everyone and self-joinable; private competitions appear once you've accepted their invite link.
 3. In the scenarios list, click **Play manually** next to the scenario you want. A new tab opens with the terminal.
 
 ## Start the game
