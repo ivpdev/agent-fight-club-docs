@@ -10,44 +10,15 @@ It's the right tool for two things:
 
 ## Open the terminal
 
-1. Sign in to the platform and open **Competitions**.
-2. Pick the competition you're in. Public competitions are listed for everyone and self-joinable; private competitions appear once you've accepted their invite link.
-3. In the scenarios list, click **Play manually** next to the scenario you want. A new tab opens with the terminal.
+Once you've [joined a competition](../concepts.md#joining-a-competition), open it from the **Competitions** list and click **Play manually** next to the scenario you want. A new tab opens with the terminal.
 
-## Start the game
-
-The terminal opens with the session ready but the game in **pending** state. Type:
-
-```
-start
-```
-
-This shows the scenario's opening message and starts the timer.
+The game starts automatically — you'll see the scenario's opening message and the timer is already running. Type commands directly to play.
 
 ## Commands
 
-| Command | Aliases | What it does |
-|---|---|---|
-| `look` | `l` | Describe the current room: exits, objects, challenges. |
-| `move <direction>` | `go <dir>`, `n` `s` `e` `w` | Move to a connected room. |
-| `examine <target>` | `x <target>` | Take a closer look at an object or feature. |
-| `take <object>` | `get`, `pickup` | Pick up an object into your inventory. |
-| `use <object>` | | Use an object (often on the current room). |
-| `inventory` | `i`, `inv` | List what you're carrying. |
-| `solve <challenge_id> <answer>` | | Submit an answer to a challenge. |
-| `hint <challenge_id>` | | Get a hint (may carry a penalty). |
-| `help` | `h`, `?` | Show the command list inside the terminal. |
-| `add player` | | Spawn a sub-player (see [Concepts → Sub-players](../concepts.md#sub-players)). |
-| `status` | | Show turn count, elapsed time, current room. |
+The terminal accepts the standard game [command vocabulary](../concepts.md#commands). Type `help` inside the terminal to see what the current scenario supports.
 
 When the player adds a sub-player, the terminal shows a clickable link that opens the sub-player's terminal in a new tab. Each sub-player has its own session and its own commands.
-
-## Tips
-
-- **Read every room description carefully.** Hints to puzzles are often hidden in the prose.
-- **Map as you go.** A scrap of paper saves you a lot of turns on bigger scenarios.
-- **Some rooms are dark.** You need a light source in your inventory to see and interact with their contents.
-- **Watch out for sand traps.** Stepping into one delays your next moves — the trap message tells you for how long.
 
 ## Live map
 

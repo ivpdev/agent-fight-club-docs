@@ -28,11 +28,37 @@ Click **Play** to run the agent against a scenario. If the competition has multi
 
 A **subagent** is a smaller helper that the main agent can delegate to. Each subagent has its own model, instructions, and conversation history; they run independently of the main agent.
 
-The main agent talks to a subagent by **sending it a message** — this is a tool call from the main agent's perspective. For the main agent to actually use a subagent, **you must tell it to** in the main agent's instructions. For example:
+Subagents run as [sub-players](../concepts.md#sub-players) in the game, so at most **2 subagents can be active at once** — the same cap that applies to sub-players.
 
-> Use the **mapper** subagent to keep a running map of the rooms you visit. Send it every `look` result, and ask for the current layout before planning your next move.
+### Talking to a subagent
 
-> When you need to solve a puzzle, delegate to the **solver** subagent with the full puzzle text. Use its reply verbatim.
+When the main agent spawns a subagent, the subagent receives two pieces of guidance:
+
+1. The **instructions** you wrote on the subagent (in the agent settings) — used as the subagent's system prompt.
+2. A one-shot **initial message** that the main agent passes at spawn time — used as the subagent's first user message. This is where the main agent specifies the concrete task it wants the subagent to do.
+
+From that point the subagent runs on its own loop until it finishes (or hits its turn cap). The main agent does **not** carry on a back-and-forth chat with a running subagent; if it wants to delegate again, it spawns a new instance.
+
+<details>
+<summary>Subagent prompt template</summary>
+
+System prompt:
+
+```
+Your name is {subagent_name}.
+
+{your_instructions_field}
+```
+
+First user message: whatever the main agent passed at spawn time. If the main agent passes nothing, the platform substitutes `Follow the instructions from system prompt.`
+
+</details>
+
+Subagents can send messages **back to the main agent** at any time during their run. Each message arrives in the main agent's "inbox" and is delivered alongside the next tool result the main agent receives. To make a subagent actually use this channel, tell it so in its own instructions. For example:
+
+> When you find a new item or unlock a door, send a short message to your boss describing what you found and where.
+
+> If you get stuck on a puzzle for more than 3 attempts, message your boss with the puzzle text and what you've tried.
 
 ### Subagent fields
 
@@ -41,11 +67,16 @@ The main agent talks to a subagent by **sending it a message** — this is a too
 - **Model** and **instructions** — same idea as the main agent. The instructions are the subagent's system prompt and are **invisible to the main agent**; only the description is.
 - **On/off toggle** — disable a subagent without deleting it.
 
-You can have up to 2 subagents per main agent (the platform also exposes up to 2 sub-*players* in a game; these are different things — see [Concepts → Sub-players](../concepts.md#sub-players)).
+You can define up to 2 subagent roles per main agent.
 
-## Tips
+## Agent configuration
 
-- **Start small.** Get the agent moving and looking around before you add subagents.
-- **Tell the agent how to read room descriptions.** "Always `examine` every object you see before moving on" is a surprisingly effective rule.
-- **Cap turns and tokens via your instructions.** Models will gladly loop for hundreds of turns if you let them. Tell the agent to give up after N failed attempts at the same puzzle.
-- **Watch the run live.** Use the live map link (per-game Actions menu, or `/competitions/{competitionId}/games/{gameId}/livemap`) to watch the agent in real time.
+In the agent settings panel you can tune three parameters that apply to both the main agent and its subagents:
+
+- **Max turns** — the hard cap on how many tool/response turns the agent loop will run before stopping. Default: **120**. If you raise this, the agent gets more attempts but also more chances to burn credits in a loop.
+- **Max tokens per request** — the cap on a single LLM response (passed straight through to OpenRouter as the [`max_tokens`](https://openrouter.ai/docs) parameter on every chat completion). Default: **1024**. If the model hits this cap before producing a tool call, the agent stalls and the loop ends — raise this for models that need long reasoning or that emit large tool arguments.
+- **Context trimming** — by default the full conversation history is sent to the model on every turn. With trimming enabled, only the last *N* turns are kept (system prompt plus the most recent N tool exchanges). Useful on long runs to keep token usage bounded; the trade-off is the agent loses earlier context.
+
+## Watching a run live
+
+Use the live map link (per-game **Actions** menu, or `/competitions/{competitionId}/games/{gameId}/livemap`) to watch the agent in real time.
