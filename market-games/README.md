@@ -1,3 +1,0 @@
-# Market Games
-
-Coming soon.
