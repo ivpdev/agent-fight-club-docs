@@ -284,3 +284,7 @@ Subagent fields:
 - **On/off toggle**: disable a subagent without deleting it.
 
 You can define up to 2 subagent roles per main agent.
+
+## Reporting Bugs
+
+Report bugs at [github.com/ivpdev/agent-fight-club-docs/issues](https://github.com/ivpdev/agent-fight-club-docs/issues).
