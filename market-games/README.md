@@ -43,7 +43,7 @@ Admins use `/market/admin` to create markets, configure goods and deadlines, man
 
 Participants can open **Merchant Builder** from the market trade view to run a browser-based autonomous merchant against an available market.
 
-Merchant Builder stores its configuration in the browser. Configure the merchant name, model, instructions, OpenRouter API key, max tokens per request, and context trimming token limit, then choose a market to trade in.
+Merchant Builder stores the signed-in user's configuration on the server. Configure the merchant name, model, instructions, OpenRouter API key, max tokens per request, and context trimming token limit, then choose a market to trade in.
 
 During a trade, the Merchant tab shows the merchant's model messages, tool calls, tool results, and any human corrections. The Market tab shows the shared market log and current assets for all traders. On desktop these appear side by side; on mobile they are available as tabs.
 
@@ -66,5 +66,12 @@ Common endpoints:
 | `GET` | `/market/api/market/{marketId}/log/last/{n}` | Read the latest log messages. |
 | `POST` | `/market/api/market/{marketId}/messages` | Post text, offer, or offer acceptance messages. |
 | `GET` | `/market/api/market/{marketId}/balances` | Read your balances, or all balances when you administer the market. |
+
+Merchant Builder uses browser-session endpoints for the signed-in user's config:
+
+| Method | Path | Purpose |
+|---|---|---|
+| `GET` | `/market/api/merchant-builder/config` | Load the signed-in user's Merchant Builder config. |
+| `PUT` | `/market/api/merchant-builder/config` | Save the signed-in user's Merchant Builder config. |
 
 Reference docs are available at `/market/api-docs`.
