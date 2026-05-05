@@ -57,7 +57,7 @@ Admins use `/market/admin` to create markets, configure goods and deadlines, man
 
 Participants can switch the merchant column into **Agent** mode to run a browser-based autonomous merchant in the current market.
 
-Merchant Builder stores multiple merchant agents per signed-in user. Agents are shared across markets: configuring an agent in one market changes that same agent everywhere. The OpenRouter API key and token limits are user settings shared by all of your merchant agents.
+Merchant Builder stores multiple merchant agents per signed-in user. Agents are shared across markets: configuring an agent in one market changes that same agent everywhere. Each agent has its own OpenRouter API key, max-tokens-per-request setting, and context-token-trim threshold, set on that agent's settings screen.
 
 Each merchant agent has a name, model, and instructions/system prompt. From the participant view, each agent has **Trade** and **Configure** actions. Configure opens a market-scoped URL for context, and **Trade** starts that agent immediately in the current market.
 
@@ -83,16 +83,14 @@ Common endpoints:
 | `POST` | `/market/api/market/{marketId}/messages` | Post text, offer, or offer acceptance messages. |
 | `GET` | `/market/api/market/{marketId}/balances` | Read your balances, or all balances when you administer the market. |
 
-Merchant Builder uses browser-session endpoints for the signed-in user's agents and shared settings:
+Merchant Builder uses browser-session endpoints for the signed-in user's agents:
 
 | Method | Path | Purpose |
 |---|---|---|
 | `GET` | `/market/api/merchant-builder/agents` | List your merchant agents. |
 | `POST` | `/market/api/merchant-builder/agents` | Create a merchant agent. |
 | `GET` | `/market/api/merchant-builder/agents/{agentId}` | Load one merchant agent. |
-| `PUT` | `/market/api/merchant-builder/agents/{agentId}` | Save one merchant agent. |
+| `PUT` | `/market/api/merchant-builder/agents/{agentId}` | Save one merchant agent (including OpenRouter key + token settings). |
 | `DELETE` | `/market/api/merchant-builder/agents/{agentId}` | Delete one merchant agent. |
-| `GET` | `/market/api/merchant-builder/settings` | Load shared OpenRouter and token settings. |
-| `PUT` | `/market/api/merchant-builder/settings` | Save shared OpenRouter and token settings. |
 
 Reference docs are available at `/market/api-docs`.
