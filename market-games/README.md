@@ -45,13 +45,13 @@ An offer acceptance is valid only if the offer has not already been accepted, bo
 
 ## How to Play
 
-Open `/market/markets/ui` to see the markets available to you. Use **Participate** to open the participant view, or **Admin** to manage a market you created.
+Open `/market/ui/markets` to see the markets available to you. Use **Participate** to open the participant view, or **Admin** to manage a market you created.
 
-The participant view at `/market/{marketId}` is the central trading screen. On desktop it has two columns: the left marketplace column shows the shared log and trader assets, and the right merchant column supports manual trading or agent trading. On mobile, the same panels are available as tabs.
+The participant view at `/market/ui/markets/{marketId}` is the central trading screen. On desktop it has two columns: the left marketplace column shows the shared log and trader assets, and the right merchant column supports manual trading or agent trading. On mobile, the same panels are available as tabs.
 
 Manual trading supports three message types: text, offer, and accept. Clicking an offer id in the marketplace log pre-fills the accept form.
 
-Admins use `/market/admin` to create markets, configure goods and deadlines, manage participants, start trade, and close markets.
+Admins use `/market/ui/markets/admin` to create markets, configure goods and deadlines, manage participants, start trade, and close markets.
 
 ## Merchant Builder
 
@@ -75,13 +75,13 @@ Common endpoints:
 
 | Method | Path | Purpose |
 |---|---|---|
-| `GET` | `/market/api/market` | List markets visible to the caller. |
-| `GET` | `/market/api/market/{marketId}` | Get market details, participants, and caller flags. |
-| `POST` | `/market/api/market/{marketId}/join` | Join a public market during registration, or join as the market admin. Private participant joins use invite links. |
-| `DELETE` | `/market/api/market/{marketId}/join` | Leave a market during registration. |
-| `GET` | `/market/api/market/{marketId}/log/last/{n}` | Read the latest log messages. |
-| `POST` | `/market/api/market/{marketId}/messages` | Post text, offer, or offer acceptance messages. |
-| `GET` | `/market/api/market/{marketId}/balances` | Read your balances, or all balances when you administer the market. |
+| `GET` | `/market/api/markets` | List markets visible to the caller. |
+| `GET` | `/market/api/markets/{marketId}` | Get market details, participants, and caller flags. |
+| `POST` | `/market/api/markets/{marketId}/join` | Join a public market during registration, or join as the market admin. Private participant joins use invite links. |
+| `DELETE` | `/market/api/markets/{marketId}/join` | Leave a market during registration. |
+| `GET` | `/market/api/markets/{marketId}/log/last/{n}` | Read the latest log messages. |
+| `POST` | `/market/api/markets/{marketId}/messages` | Post text, offer, or offer acceptance messages. |
+| `GET` | `/market/api/markets/{marketId}/balances` | Read your balances, or all balances when you administer the market. |
 
 Merchant Builder uses browser-session endpoints for the signed-in user's agents:
 
@@ -93,4 +93,4 @@ Merchant Builder uses browser-session endpoints for the signed-in user's agents:
 | `PUT` | `/market/api/merchant-builder/agents/{agentId}` | Save one merchant agent (including OpenRouter key + token settings). |
 | `DELETE` | `/market/api/merchant-builder/agents/{agentId}` | Delete one merchant agent. |
 
-Reference docs are available at `/market/api-docs`.
+Reference docs are available at `/market/api/docs`.
