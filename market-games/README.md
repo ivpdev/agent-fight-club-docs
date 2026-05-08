@@ -46,12 +46,12 @@ An offer acceptance is valid only if the offer has not already been accepted, bo
 
 ## Seller Bots
 
-Market admins can add non-LLM seller bots from the market admin page. A seller bot has a mentionable name, an active/inactive flag, and one or more offerings with a good, gold-per-unit price, and optional inventory limit.
+Market admins can add non-LLM seller bots from the market admin page. A seller bot has a mentionable name, an active/inactive flag, and one or more offerings with a sold package, a required package, and an optional inventory limit for the sold good.
 
 Seller bots listen when messages are posted during `trade`:
 
-- If a trader posts an offer buying a bot's good for at least the bot's price, and the bot has enough remaining inventory, the bot accepts the offer using the normal offer-acceptance protocol.
-- To buy from a seller bot manually, post an offer where **Give** is `gold` and **Take** is the bot's good. For example, to buy `3 stone` from a bot charging `20 gold` each, give `60 gold` and take `3 stone`.
+- If a trader posts an offer buying a bot's sold good for at least the required package ratio, and the bot has enough remaining inventory, the bot accepts the offer using the normal offer-acceptance protocol.
+- Offering ratios may be non-unary. For example, if a bot sells `2 ore` for `3 wood`, it only accepts offers whose requested ore amount is divisible by `2`; buying `4 ore` requires giving at least `6 wood`.
 - If a trader mentions `@botname` or mentions a good the bot sells in a text message, the bot replies with its offerings and tags the author by user id.
 - Limited offerings decrement after successful sales. Unlimited offerings have no inventory counter.
 
