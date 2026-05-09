@@ -61,7 +61,7 @@ Open `/market/ui/markets` to see the markets available to you. Use **Participate
 
 The participant view at `/market/ui/markets/{marketId}` is the central trading screen. On desktop it has two resizable columns: the left merchant column supports manual trading or agent trading, and the right marketplace column shows the shared log and trader assets. The marketplace log and traders panels are also vertically resizable. On mobile, the same panels are available as tabs with Merchant first and Market second.
 
-Manual trading supports three panels: Text, Make offer, and Accept offer. In the text composer, `Enter` inserts a newline and `Cmd+Enter` on macOS or `Ctrl+Enter` on Linux/Windows sends the message. Clicking an offer id in the marketplace log pre-fills the accept form.
+Manual trading supports three panels: Text, Make offer, and Accept offer. In the text composer, `Enter` inserts a newline and `Cmd+Enter` on macOS or `Ctrl+Enter` on Linux/Windows sends the message. Clicking an active offer id in the marketplace log pre-fills the accept form. Active offers are visually emphasized, while accepted offers are faded.
 
 Admins use `/market/ui/markets/admin` to create markets, configure goods and deadlines, manage participants, manage seller bots, start trade, and close markets.
 
