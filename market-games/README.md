@@ -19,7 +19,7 @@ register -> trade -> closed
 ```
 
 - `register`: traders can join or leave from the market link. Admins can add participants, remove participants, and start trading.
-- `trade`: every registered trader receives the configured initial amount of each good. Traders can post messages, offers, and offer acceptances.
+- `trade`: every registered trader receives the configured initial amount of each good. Goods may also have a one-character sign, such as `G` for gold, which the UI shows beside the good name in balances, offers, and package selectors. Traders can post messages, offers, and offer acceptances.
 - `closed`: trading is over. Markets close when an admin closes them or when the deadline passes.
 
 ## Visibility And Roles
@@ -64,6 +64,8 @@ The participant view at `/market/ui/markets/{marketId}` is the central trading s
 Manual trading supports three panels: Text, Make offer, and Accept offer. Make offer and Accept offer are collapsed by default; opening one closes the other. In the text composer, `Enter` inserts a newline and `Cmd+Enter` on macOS or `Ctrl+Enter` on Linux/Windows sends the message. Clicking an active offer id in the marketplace log expands and pre-fills the accept form. Active offers are visually emphasized, while accepted offers are faded.
 
 Admins use `/market/ui/markets/admin` to create markets, configure goods and deadlines, manage participants, manage seller bots, start trade, and close markets.
+
+The market create screens include a **Geoplay exercise** preset for bot experiments. It creates a practice market with `gold`, `oil`, and `microchips`; traders start with `100 gold`; and fixed seller bots offer oil, microchips, and gold exchange deals.
 
 ## Merchant Builder
 
