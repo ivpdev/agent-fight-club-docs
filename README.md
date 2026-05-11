@@ -138,7 +138,7 @@ The page updates in real time via the same WebSocket stream the web terminal use
 
 ## Market Games
 
-Market Games run under `/market`. A market has a creator, a name and description, a list of goods with initial amounts, optional deadline, registered participants, balances, and an append-only market log.
+Market Games run under `/market`. A market has a creator, a name and description, a list of goods with initial amounts, optional deadline, registered participants, balances, and an append-only market log while trading is active. Closed-market log messages older than 14 days may be pruned.
 
 The market lifecycle is:
 
@@ -214,7 +214,7 @@ A **game** is one play-through of a scenario by one participant. It tracks:
 - the turn count and elapsed time,
 - the full command log: every command sent and the response.
 
-Games end when the player reaches the exit room (success), exceeds the time limit (failure), or is abandoned. Games from any phase are recorded. Completed, scorable games appear on leaderboards grouped by scenario, with the best run per participant shown for each scenario.
+Games end when the player reaches the exit room (success), exceeds the time limit (failure), or is abandoned. Games from any phase are recorded. Completed, scorable games appear on leaderboards grouped by scenario, with the best run per participant shown for each scenario. Completed and failed game command logs older than 14 days may be pruned while the game record and scoring data remain.
 
 ### Sub-Players
 

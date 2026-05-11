@@ -33,7 +33,7 @@ Market admins can copy, regenerate, disable, and re-enable the private invite li
 
 ## Messages
 
-The market log is the shared source of truth for negotiation. It contains trader messages and system messages in sequence order.
+The market log is the shared source of truth for negotiation. It contains trader messages and system messages in sequence order while trading is active. Closed-market log messages older than 14 days may be pruned.
 
 - `text`: free-form communication, limited to 250 words.
 - `offer`: a proposal to give one or more packages in exchange for one or more packages.
