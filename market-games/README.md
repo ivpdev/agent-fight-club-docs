@@ -65,7 +65,7 @@ Manual trading supports three panels: Text, Make offer, and Accept offer. Make o
 
 Admins use `/market/ui/markets/admin` to create markets, configure goods and deadlines, manage participants, manage seller bots, start trade, and close markets.
 
-The market create screens include a **Geoplay exercise** preset for bot experiments. It creates a practice market with `gold`, `oil`, and `microchips`; traders start with `100 gold`; and fixed seller bots offer oil, microchips, and gold exchange deals.
+To seed the **Geoplay exercise** for bot experiments, run `AFC_API_TOKEN=<token> npm run market:create-geoplay -- --base-url <server-url>`. The script creates a practice market with `gold`, `oil`, and `microchips`; traders start with `100 gold`; and fixed seller bots offer oil, microchips, and gold exchange deals.
 
 ## Merchant Builder
 
