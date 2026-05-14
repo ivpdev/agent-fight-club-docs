@@ -59,9 +59,9 @@ Seller bots listen when messages are posted during `trade`:
 
 Open `/market/ui/markets` to see the markets available to you. Use **Participate** to open the participant view, or **Admin** to manage a market you created.
 
-The participant view at `/market/ui/markets/{marketId}` is the central trading screen. On desktop it has two resizable columns: the left merchant column supports manual trading or agent trading, and the right marketplace column shows the shared log and trader assets. The marketplace log and traders panels are also vertically resizable. On mobile, the same panels are available as tabs with Merchant first and Market second.
+The participant view at `/market/ui/markets/{marketId}` is the central trading screen. On desktop it has two resizable columns: the left merchant column supports manual trading or agent trading, and the right marketplace column shows the shared log, trader assets, and current market state. The marketplace log and traders panels are also vertically resizable. On mobile, the same panels are available as tabs with Merchant first and Market second.
 
-Manual trading supports three panels: Text, Make offer, and Accept offer. Make offer and Accept offer are collapsed by default; opening one closes the other. In the text composer, `Enter` inserts a newline and `Cmd+Enter` on macOS or `Ctrl+Enter` on Linux/Windows sends the message. Clicking an active offer id in the marketplace log expands and pre-fills the accept form. Active offers are visually emphasized, while accepted offers are faded.
+Manual trading supports three panels: Text, Make offer, and Accept offer. These posting controls are disabled outside the `trade` state and show a hover hint explaining why. Make offer and Accept offer are collapsed by default; opening one closes the other. In the text composer, `Enter` inserts a newline and `Cmd+Enter` on macOS or `Ctrl+Enter` on Linux/Windows sends the message. Clicking an active offer id in the marketplace log expands and pre-fills the accept form. Active offers are visually emphasized, while accepted offers are faded.
 
 Admins use `/market/ui/markets/admin` to create markets, configure goods and deadlines, manage participants, manage seller bots, start trade, and close markets.
 
