@@ -63,11 +63,11 @@ Open `/market/ui/markets` to see the markets available to you. Use **Participate
 
 The participant view at `/market/ui/markets/{marketId}` is the central trading screen. On desktop it has two resizable columns: the left merchant column supports manual trading or agent trading, and the right marketplace column shows the shared log, trader assets, and current market state. The marketplace log and traders panels are also vertically resizable. On mobile, the same panels are available as tabs with Merchant first and Market second.
 
-Manual trading supports three panels: Text, Make offer, and Accept offer. These posting controls are disabled outside the `trade` state and show a hover hint explaining why. Make offer and Accept offer are collapsed by default; opening one closes the other. In the text composer, `Enter` inserts a newline and `Cmd+Enter` on macOS or `Ctrl+Enter` on Linux/Windows sends the message. Offers can be restricted with comma-separated trader names. Clicking an active offer id in the marketplace log expands and pre-fills the accept form. Active offers are visually emphasized, while accepted offers are faded.
+Manual trading supports three panels: Text, Make offer, and Accept offer. These posting controls are disabled outside the `trade` state and show a hover hint explaining why. Make offer and Accept offer are collapsed by default; opening one closes the other. In the text composer, `Enter` inserts a newline and `Cmd+Enter` on macOS or `Ctrl+Enter` on Linux/Windows sends the message. Trader mentions such as `@Saudi` are highlighted with a dark tint based on that trader's color. Offers can be restricted with comma-separated trader names. Clicking an active offer id in the marketplace log expands and pre-fills the accept form. Active offers are visually emphasized, while accepted offers are faded.
 
 Admins use `/market/ui/markets/admin` to create markets, configure goods and deadlines, manage participants, manage seller bots, start trade, close markets, restart markets they own, and delete markets they own. Restarting a market keeps setup and participants, moves it back to `register`, clears balances and log messages, and resets seller bot inventory. Superadmins can restart or delete any market.
 
-To seed the **Geoplay exercise** for bot experiments, run `AFC_API_TOKEN=<token> npm run market:create-geoplay -- --base-url <server-url>`. The script creates a practice market with `gold`, `oil`, and `microchips`; traders start with `100 gold`; and fixed seller bots offer oil, microchips, and gold exchange deals.
+To seed the **Geoplay exercise** for bot experiments, run `AFC_API_TOKEN=<token> npm run market:create-geoplay -- --base-url <server-url>`. The script creates a practice market with `dollar` (`$`), `oil` (`🛢`), and `microchips` (`▣`); traders start with `100 dollar`; and fixed seller bots offer oil, microchips, and dollar exchange deals.
 
 ## Merchant Builder
 
@@ -77,7 +77,7 @@ Merchant Builder stores multiple merchant agents per signed-in user. Agents are 
 
 Each merchant agent has a name, model, and instructions/system prompt. From the participant view, each agent has **Trade** and **Configure** actions. Configure opens a market-scoped URL for context, and **Trade** starts that agent immediately in the current market.
 
-During a trade, the merchant panel shows the merchant's visible intent messages, readable market messages/offers sent by the agent, tool calls, expanded-by-default collapsible tool results, and any human corrections. Switching away from an active agent stops it and resets that run's browser-side memory.
+During a trade, the merchant panel shows the merchant's visible intent messages, readable market messages/offers sent by the agent, tool calls, collapsible tool results, and any human corrections. Human corrections are injected before the next tool result content so the agent sees the instruction before interpreting that result. Switching away from an active agent stops it and resets that run's browser-side memory.
 
 ## API
 
