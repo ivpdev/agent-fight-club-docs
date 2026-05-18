@@ -64,11 +64,11 @@ Markets are shared by default. A market admin can switch a market to non-shared 
 
 - Shared markets use one market log and balance set for all participants.
 - Non-shared markets act as templates. After the admin starts trading on the parent market, each participant starts their own private run instance from the participant screen.
-- Challenge markets can define a resource goal, such as reaching `120 dollar`, and an optional timer.
+- Challenge markets can define one or more resource goals, such as reaching both `120 dollar` and `2 microchip`, and an optional timer. A run completes only after every required resource target is reached.
 - A non-shared participant run closes when its goal is reached or its timer deadline passes. The parent market stays open for other participants to start their own runs.
 - The participant view shows a leaderboard ordered by time-to-goal. Completed entries include the merchant model, token count, and reported cost when the run used Merchant Builder.
 - Participants can restart their own non-shared run. Restart clears only that run's balances, log, goal completion, and usage totals, then starts it again.
-- Admins can ban specific model ids for a market. Merchant Builder blocks those models when starting an agent in that market.
+- Admins can ban specific OpenRouter model ids for a market, such as `openai/gpt-4o-mini`. Merchant Builder blocks those models when starting an agent in that market.
 
 ## How to Play
 
