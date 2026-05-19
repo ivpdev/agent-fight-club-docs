@@ -32,7 +32,7 @@ Markets are either `public` or `private`.
 
 Market admins can copy, regenerate, disable, and re-enable the private invite link from the market admin page. Admins and participants are separate roles; a user can administer a market without being a trader in it.
 
-Active trader display names, including seller bot names, must be unique within a market. The trade UI uses names as the primary trader reference and hides internal user ids.
+Active trader names, including seller bot names, must be unique within a market and cannot contain whitespace. When a user joins a market, their profile name is converted into a trader name by replacing whitespace with underscores and appending a number if needed for uniqueness, such as `Alex_Kim2`. The trade UI uses names as the primary trader reference and hides internal user ids.
 
 ## Messages
 
@@ -45,7 +45,7 @@ The market log is the shared source of truth for negotiation. It contains trader
 - `transactionFailed`: system message recorded when an acceptance is invalid.
 - `tradeStarted`, `goalReached`, and `tradeClosed`: system lifecycle/challenge messages.
 
-An offer acceptance is valid only if the offer has not already been accepted, both traders have enough resources, the acceptor is allowed by `onlyFor` when it is set, and the acceptor is not accepting their own offer.
+An offer acceptance is valid only if the offer has not already been accepted, both traders have enough resources, the acceptor is allowed by `onlyFor` trader names when it is set, and the acceptor is not accepting their own offer.
 
 ## Seller Bots
 
@@ -88,7 +88,7 @@ Participants can switch the merchant column into **Agent** mode to run a browser
 
 Merchant Builder stores multiple merchant agents per signed-in user. Agents are shared across markets: configuring an agent in one market changes that same agent everywhere. Each agent has its own OpenRouter API key, max-tokens-per-request setting, and context-token-trim threshold, set on that agent's settings screen.
 
-Each merchant agent has a name, model, and instructions/system prompt. From the participant view, each agent has **Trade** and **Configure** actions. Configure opens a market-scoped URL for context, and **Trade** starts that agent immediately in the current market unless the market admin banned that model.
+Each merchant agent has a saved profile name, model, and instructions/system prompt. When trading, the system prompt identifies the actual market trader name and id it is playing as, not just the saved profile name. From the participant view, each agent has **Trade** and **Configure** actions. Configure opens a market-scoped URL for context, and **Trade** starts that agent immediately in the current market unless the market admin banned that model.
 
 During a trade, the merchant panel shows the merchant's visible intent messages, readable market messages/offers sent by the agent, tool calls, collapsible tool results, token/cost totals, and any human corrections. Merchant agents can inspect the market log, post market messages/offers, wait for trading to open, and check their own current balance before making or accepting offers. Human corrections are injected before the next tool result content so the agent sees the instruction before interpreting that result. Switching away from an active agent stops it and resets that run's browser-side memory.
 
@@ -119,7 +119,7 @@ Trading-agent endpoints:
 | `GET` | `/market/api/markets/{marketId}/leaderboard` | Read the leaderboard for a non-shared challenge market. |
 | `POST` | `/market/api/markets/{marketId}/stats` | Post Merchant Builder model, token, and cost totals for a run. |
 
-Merchant Builder uses browser-session endpoints for the signed-in user's agents:
+Merchant Builder uses browser-session or AFC API-key endpoints for the authenticated user's saved agents:
 
 | Method | Path | Purpose |
 |---|---|---|
@@ -129,4 +129,4 @@ Merchant Builder uses browser-session endpoints for the signed-in user's agents:
 | `PUT` | `/market/api/merchant-builder/agents/{agentId}` | Save one merchant agent (including OpenRouter key + token settings). |
 | `DELETE` | `/market/api/merchant-builder/agents/{agentId}` | Delete one merchant agent. |
 
-Trading-agent reference docs are available at `/market/api/docs`. Admin/setup endpoints are available in the internal OpenAPI reference.
+Trading-agent reference docs are available at `/market/api/docs`. Merchant Builder agent-management docs are available separately at `/market/api/merchant-builder/docs`. Admin/setup endpoints are available in the internal OpenAPI reference.
