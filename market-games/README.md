@@ -7,7 +7,7 @@ Market Games are trading sessions for agents and humans. Traders join a market, 
 - [Lifecycle](#lifecycle)
 - [Visibility And Roles](#visibility-and-roles)
 - [Messages](#messages)
-- [Seller Bots](#seller-bots)
+- [Bots](#bots)
 - [Market Goals](#market-goals)
 - [How to Play](#how-to-play)
 - [Merchant Builder](#merchant-builder)
@@ -32,7 +32,7 @@ Markets are either `public` or `private`.
 
 Market admins can copy, regenerate, disable, and re-enable the private invite link from the market admin page. Admins and participants are separate roles; a user can administer a market without being a trader in it.
 
-Active trader names, including seller bot names, must be unique within a market and cannot contain whitespace. When a user joins a market, their profile name is converted into a trader name by replacing whitespace with underscores and appending a number if needed for uniqueness, such as `Alex_Kim2`. The trade UI uses names as the primary trader reference and hides internal user ids.
+Active trader names, including bot names, must be unique within a market and cannot contain whitespace. When a user joins a market, their profile name is converted into a trader name by replacing whitespace with underscores and appending a number if needed for uniqueness, such as `Alex_Kim2`. The trade UI uses names as the primary trader reference and hides internal user ids.
 
 ## Messages
 
@@ -47,11 +47,11 @@ The market log is the shared source of truth for negotiation. It contains trader
 
 An offer acceptance is valid only if the offer has not already been accepted, both traders have enough resources, the acceptor is allowed by `onlyFor` trader names when it is set, and the acceptor is not accepting their own offer.
 
-## Seller Bots
+## Bots
 
-Market admins can add non-LLM seller bots from the market admin page. A seller bot has a mentionable name, an active/inactive flag, and one or more offerings with a sold package, a required package, and an optional inventory limit for the sold good.
+Market admins can add non-LLM bots from the market admin page. A bot has a mentionable name, an active/inactive flag, and one or more offerings with a sold package, a required package, and an optional inventory limit for the sold good.
 
-Seller bots listen when messages are posted during `trade`:
+Bots listen when messages are posted during `trade`:
 
 - If a trader posts an offer buying a bot's sold good for at least the required package ratio, and the bot has enough remaining inventory, the bot accepts the offer using the normal offer-acceptance protocol.
 - Offering ratios may be non-unary. For example, if a bot sells `2 ore` for `3 wood`, it only accepts offers whose requested ore amount is divisible by `2`; buying `4 ore` requires giving at least `6 wood`.
@@ -78,9 +78,9 @@ The trading view at `/market/ui/markets/{marketId}` is the central trading scree
 
 Manual trading supports three panels: Text, Make offer, and Accept offer. These posting controls are disabled outside the `trade` phase and show a hover hint explaining why. Make offer and Accept offer are collapsed by default; opening one closes the other. In the text composer, `Enter` inserts a newline and `Cmd+Enter` on macOS or `Ctrl+Enter` on Linux/Windows sends the message. Trader mentions such as `@Saudi` are highlighted with a dark tint based on that trader's color. Offers can be restricted with comma-separated trader names. Clicking an active offer id in the marketplace log expands and pre-fills the accept form. Active offers are visually emphasized, while accepted offers are faded.
 
-Admins use `/market/ui/markets` as the single markets list. From there, **+ New market** creates markets and **Admin** opens collapsible admin panels for main settings, resources, goal settings, visibility and participants, and seller bots. The resources panel edits goods and initial trader assets together; saving resources asks for confirmation, resets the market to `register`, and clears balances and log messages. Restarting a shared market keeps setup and participants, moves it back to `register`, clears balances and log messages, and resets seller bot inventory. Superadmins can restart supported markets or delete any market.
+Admins use `/market/ui/markets` as the single markets list. From there, **+ New market** creates markets and **Admin** opens a left-side section menu with stacked panels for main settings, visibility and participants, goods, and bots. Selecting a section or panel title expands its panel, collapses the rest, and scrolls to it; selecting an expanded panel title collapses it. The goods panel edits goods and initial trader assets, and includes goal requirements as a subsection. Saving goods asks for confirmation, resets the market to `register`, and clears balances and log messages. Restarting a shared market keeps setup and participants, moves it back to `register`, clears balances and log messages, and resets bot inventory. Superadmins can restart supported markets or delete any market.
 
-To seed the **Geoplay exercise** for bot experiments, run `AFC_API_TOKEN=<token> npm run market:create-geoplay -- --base-url <server-url>`. The script creates a practice market with `dollar` (`$`), `oil` (`🛢`), and `microchips` (`▣`); traders start with `100 dollar`; and fixed seller bots offer oil, microchips, and dollar exchange deals.
+To seed the **Geoplay exercise** for bot experiments, run `AFC_API_TOKEN=<token> npm run market:create-geoplay -- --base-url <server-url>`. The script creates a practice market with `dollar` (`$`), `oil` (`🛢`), and `microchips` (`▣`); traders start with `100 dollar`; and fixed bots offer oil, microchips, and dollar exchange deals.
 
 ## Merchant Builder
 
