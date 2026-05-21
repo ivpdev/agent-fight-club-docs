@@ -65,6 +65,10 @@ Markets are shared by default. A market admin can switch a market between **Shar
 - Shared markets use one market log and balance set for all participants.
 - Non-shared markets act as templates. After the admin starts trading on the parent market, each participant starts their own private run instance from the participant screen.
 - Goal markets can define one or more resource goals, such as reaching both `120 dollar` and `2 microchip`, and an optional timer. A run completes only after every required resource target is reached.
+- Goals support three modes:
+  - **None**: the market closes only on deadline or admin action.
+  - **Shared**: every trader has the same goal requirements.
+  - **Auto-personal**: when the market starts trading, each trader is privately assigned one of the market's goods as a personal goal. The target amount is `round(multiplier × initialAmount)` for that good (multiplier set per market, must be greater than 1.0; default 1.3). Goods are dealt from a shuffled deck so each good is used as a goal as evenly as possible across participants. A trader sees only their own personal goal; admins see every assignment. The first participant to reach their personal goal closes the market.
 - A non-shared participant run closes when its goal is reached or its timer deadline passes. The parent market stays open for other participants to start their own runs.
 - The participant view shows a leaderboard ordered by time-to-goal. Completed entries include the merchant model, token count, and reported cost when the run used Merchant Builder.
 - Participants can restart their own non-shared run. Restart clears only that run's balances, log, goal completion, and usage totals, then starts it again. Admin restart is not available on the non-shared parent template.
