@@ -85,7 +85,14 @@ Manual trading supports three panels: Text, Make offer, and Accept offer. These 
 
 Admins use `/market/ui/markets` as the single markets list. From there, **+ New market** creates markets and **Admin** opens a left-side section menu with stacked panels for main settings, visibility and participants, goods & goal, and bots. Selecting a section or panel title expands its panel, collapses the rest, and scrolls to it; selecting an expanded panel title collapses it. The whole panel header row is clickable. **All** toggles every panel expanded or collapsed, and `Ctrl+F` or `Cmd+F` expands every panel before browser search. The visibility and participants panel switches between **Shared** and **Individual** mode with a confirmation prompt. The goods & goal panel edits goods, initial trader assets, and goal settings. Saving goods asks for confirmation, resets the market to `register`, and clears balances and log messages. Restarting a shared market keeps setup and participants, moves it back to `register`, clears balances and log messages, and resets bot inventory. Superadmins can restart supported markets or delete any market.
 
-To seed the **Geoplay exercise** for bot experiments, run `AFC_API_TOKEN=<token> npm run market:create-geoplay -- --base-url <server-url>`. The script creates a practice market with `dollar` (`$`), `oil` (`🛢`), and `microchips` (`▣`); traders start with `100 dollar`; and fixed bots offer oil, microchips, and dollar exchange deals.
+To seed **Geo trade** exercises for bot experiments, run one of the seed scripts with an API token:
+
+- `AFC_API_TOKEN=<token> npm run market:create-geoplay -- --base-url <server-url>` creates **Geo trade simple**.
+- `AFC_API_TOKEN=<token> npm run market:create-geo-trade-simple -- --base-url <server-url>` creates **Geo trade simple**: individual runs, `100 dollar` initial assets, shared `120 dollar` goal, and unlimited Saudi/Taiwan/Russia/US seller bots.
+- `AFC_API_TOKEN=<token> npm run market:create-geo-trade-shared -- --base-url <server-url>` creates **Geo trade shared**: same goods, goal, and bots as simple, but in shared-market mode.
+- `AFC_API_TOKEN=<token> npm run market:create-geo-trade-p2p -- --base-url <server-url>` creates **Geo trade p2p**: individual runs, `100` of each resource initially, no bots, and auto-personal goals with multiplier `1.2`.
+
+All Geo trade variants use `dollar` (`$`), `oil` (`🛢`), and `microchips` (`▣`).
 
 ## Merchant Builder
 
