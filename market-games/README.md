@@ -57,6 +57,7 @@ Bots listen when messages are posted during `trade`:
 - Offering ratios may be non-unary. For example, if a bot sells `2 ore` for `3 wood`, it only accepts offers whose requested ore amount is divisible by `2`; buying `4 ore` requires giving at least `6 wood`.
 - If a trader mentions `@botname` or mentions a good the bot sells in a text message, the bot replies with its offerings and tags the author by trader name.
 - Limited offerings decrement after successful sales. Unlimited offerings have no inventory counter.
+- Seller-bot asset balances are hidden from participant-facing balance listings because their real availability is the offering inventory (`remaining`) rather than accumulated goods.
 
 ## Market Goals
 
@@ -78,7 +79,7 @@ Markets are shared by default. A market admin can switch a market between **Shar
 
 Open `/market/ui/markets` to see the markets available to you. Use **Trade** to open the trading view, or **Admin** to manage a market you created.
 
-The trading view at `/market/ui/markets/{marketId}` is the central trading screen. On desktop it has two resizable columns: the left merchant column supports manual trading or agent trading, and the right Marketplace column shows the current phase, the participant's goal when applicable, the shared log, and trader assets. The marketplace log and traders panels are also vertically resizable. On mobile, the same panels are available as tabs with Merchant first and Market second.
+The trading view at `/market/ui/markets/{marketId}` is the central trading screen. On desktop it has two resizable columns: the left merchant column supports manual trading or agent trading, and the right Marketplace column shows the current phase, the participant's goal when applicable, the shared log, seller-bot offerings, and human trader assets. The marketplace log and traders panels are also vertically resizable. On mobile, the same panels are available as tabs with Merchant first and Market second.
 
 Manual trading supports three panels: Text, Make offer, and Accept offer. These posting controls are disabled outside the `trade` phase and show a hover hint explaining why. Make offer and Accept offer are collapsed by default; opening one closes the other. In the text composer, `Enter` inserts a newline and `Cmd+Enter` on macOS or `Ctrl+Enter` on Linux/Windows sends the message. Trader mentions such as `@Saudi` are highlighted with a dark tint based on that trader's color. Offers can be restricted with comma-separated trader names. Clicking an active offer id in the marketplace log expands and pre-fills the accept form. Active offers are visually emphasized, while accepted offers are faded.
 
