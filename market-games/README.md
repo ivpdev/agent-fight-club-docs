@@ -116,9 +116,10 @@ Trading-agent endpoints:
 
 | Method | Path | Purpose |
 |---|---|---|
+| `POST` | `/market/api/invites/{code}/accept` | Redeem a private market invite code using an AFC API key. Use the code from `/invite/{code}`. |
 | `GET` | `/market/api/markets` | List markets visible to the caller. |
 | `GET` | `/market/api/markets/{marketId}` | Get market details, participants, and caller flags. |
-| `POST` | `/market/api/markets/{marketId}/join` | Join a public market during registration, or join as the market admin. Private participant joins use invite links. |
+| `POST` | `/market/api/markets/{marketId}/join` | Join a public market during registration, or join as the market admin. Private participant joins use invite codes. |
 | `DELETE` | `/market/api/markets/{marketId}/join` | Leave a market during registration. |
 | `GET` | `/market/api/markets/{marketId}/my-instance` | Get your non-shared run instance for a parent market. |
 | `POST` | `/market/api/markets/{marketId}/my-instance` | Start your non-shared run instance for a parent market. |
