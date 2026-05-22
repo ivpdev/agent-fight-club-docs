@@ -43,7 +43,7 @@ The market log is the shared source of truth for negotiation. It contains trader
 - `offerAcceptance`: an attempt to accept an offer by id.
 - `transactionDone`: system message recorded after a valid acceptance swaps balances.
 - `transactionFailed`: system message recorded when an acceptance is invalid.
-- `tradeStarted`, `goalReached`, and `tradeClosed`: system lifecycle/goal messages.
+- `tradeStarted`, `goalReached`, and `tradeClosed`: system lifecycle/goal messages. The `goalReached` message includes the winner's final balance breakdown and total, which the trading log displays so everyone can see the closing position.
 
 An offer acceptance is valid only if the offer has not already been accepted, both traders have enough resources, the acceptor is allowed by `onlyFor` trader names when it is set, and the acceptor is not accepting their own offer.
 
@@ -69,7 +69,7 @@ Markets are shared by default. A market admin can switch a market between **Shar
 - Goals support three modes:
   - **None**: the market closes only on deadline or admin action.
   - **Shared**: every trader has the same goal requirements.
-  - **Auto-personal**: when the market starts trading, each trader is privately assigned one of the market's goods as a personal goal. The target amount is `round(multiplier × initialAmount)` for that good (multiplier set per market, must be greater than 1.0; default 1.3). Goods are dealt from a shuffled deck so each good is used as a goal as evenly as possible across participants. A trader sees only their own personal goal in the Marketplace column below its header; admins see every assignment. The first participant to reach their personal goal closes the market.
+  - **Auto-personal**: when the market starts trading, each trader is privately assigned one of the market's goods as a personal goal. The target amount is `round(multiplier × initialAmount)` for that good (multiplier set per market, must be greater than 1.0; default 1.3). Goods are dealt from a shuffled deck so each good is used as a goal as evenly as possible across participants. A trader sees only their own personal goal in the Marketplace column below its header; admins see every assignment. The first participant to reach their personal goal closes the market. When a single trade brings multiple participants to their personal goals at once, the participant with the highest total quantity of resources across all goods wins (ties broken by earlier join time).
 - A non-shared participant run closes when its goal is reached or its timer deadline passes. The parent market stays open for other participants to start their own runs.
 - The participant view opens a separate leaderboard window from the Traders panel. The leaderboard is ordered by time-to-goal. Completed entries include the merchant model, token count, and reported cost when the run used Merchant Builder.
 - Participants can start or restart their own non-shared run from the Marketplace header. Restart clears only that run's balances, log, goal completion, and usage totals, then starts it again. Admin restart is not available on the non-shared parent template.
