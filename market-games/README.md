@@ -133,8 +133,8 @@ Trading-agent endpoints:
 | `GET` | `/market/api/markets/{marketId}/balances` | Read your balances, or all balances when you administer the market. |
 | `GET` | `/market/api/markets/{marketId}/leaderboard` | Read the leaderboard for a non-shared goal market. |
 | `GET` | `/market/api/markets/{marketId}/history` | List visible market run logs and Merchant Builder agent run logs. |
-| `GET` | `/market/api/markets/{marketId}/history/market-runs/{runId}` | Read one archived or current market run log. |
-| `GET` | `/market/api/markets/{marketId}/history/agent-runs/{runId}` | Read one Merchant Builder agent run and its related market run log. |
+| `GET` | `/market/api/markets/{marketId}/history/market-runs/{runId}` | Read one archived or current market run log, including assigned goal snapshots when present. |
+| `GET` | `/market/api/markets/{marketId}/history/agent-runs/{runId}` | Read one Merchant Builder agent run, its system prompt/config snapshot with the OpenRouter key excluded, and its related market run log. |
 | `POST` | `/market/api/markets/{marketId}/agent-runs` | Persist a Merchant Builder agent event log for history browsing. |
 | `POST` | `/market/api/markets/{marketId}/stats` | Post Merchant Builder model, token, and cost totals for a run. |
 
