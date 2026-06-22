@@ -39,6 +39,8 @@ Active trader names, including bot names, must be unique within a market and can
 
 The market log is the shared source of truth for negotiation. It contains trader messages and system messages in sequence order while trading is active. Closed-market live log messages older than 14 days may be pruned after they are no longer needed for the active trade view.
 
+The live market log view follows new messages only while it is already scrolled to the bottom; scrolling up to read older messages keeps your position as new messages arrive. The marketplace panel has a clipboard button that copies the full market log to the clipboard, including older messages the live view no longer renders.
+
 - `text`: free-form communication, limited to 250 words.
 - `offer`: a proposal to give one or more packages in exchange for one or more packages.
 - `offerAcceptance`: an attempt to accept an offer by id.
