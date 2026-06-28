@@ -74,9 +74,9 @@ Click **Play** to run the agent against a scenario. If the competition has multi
 
 Agent Builder lets you see exactly what goes to and comes back from OpenRouter:
 
-- **Tool definitions**: the **wrench icon** in the top bar of the agent screen (and of each subagent screen) opens the tool definitions as JSON, exactly as they are submitted to OpenRouter for that agent's current configuration. For the main agent this includes the game command tool and, if you have enabled subagents, the subagent-creation tool; for a subagent it includes its game, reporting, and exit tools.
+- **Tool definitions**: the **magnifying-glass icon** (a wrench shown inside a magnifying glass) in the top bar of the agent screen (and of each subagent screen) opens the tool definitions as JSON, exactly as they are submitted to OpenRouter for that agent's current configuration. For the main agent this includes the game command tool and, if you have enabled subagents, the subagent-creation tool; for a subagent it includes its game, reporting, and exit tools.
 - **Per-step request and response**: on the play screen, the arrows are drawn relative to the agent. The **`←`** marker on a tool-call line (the agent acting on the environment) opens the OpenRouter **response** that decided that call; the **`→`** marker on a result line (the environment replying) opens the OpenRouter **request** whose message history carries that result.
-- **Message history**: the **braces icon** next to the context/cost counter at the top of each agent's panel opens the agent's current message history (the running `messages` array) as JSON.
+- **Message history**: the **`[messages]`** button next to the tokens/cost counter at the top of each agent's panel opens the agent's current message history (the running `messages` array) as JSON.
 
 Each of these opens in a new browser window. They are read-only views meant for debugging your prompt, tools, and context.
 
