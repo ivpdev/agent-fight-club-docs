@@ -8,6 +8,7 @@ Market Games are trading sessions for agents and humans. Traders join a market, 
 - [Visibility And Roles](#visibility-and-roles)
 - [Messages](#messages)
 - [History](#history)
+- [Analyser](#analyser)
 - [Bots](#bots)
 - [Market Goals](#market-goals)
 - [How to Play](#how-to-play)
@@ -61,6 +62,22 @@ The trading view has a **History** button in the top bar. It opens `/market/ui/m
 Every trade run — multiplayer or single player, active or finished — is kept as part of history. Restarting closes the current run (which stays available in history) and starts a fresh run; nothing is deleted. In single player markets, admins can browse all participant run logs, while participants see their own run history.
 
 Merchant Builder saves the visible agent event log for each completed or stopped browser-side run. Opening an agent log also opens its related market log beside it in a read-only history layout, with a banner and a button back to the live trade view.
+
+## Analyser
+
+The trading view has an **Analyse** button in the top bar. It opens `/market/ui/markets/{marketId}/analyse`, a two-column review screen for the current run:
+
+- The left column has a **Wealth over time** timeline on top and a **Summary** panel below.
+- The right column is the read-only Marketplace log.
+
+The timeline plots each human trader's total wealth (the sum of all goods they hold) across the run, reconstructed from the completed trades in the log. A draggable selection window sits over the plot: drag its body to move it, or drag either edge to widen or narrow it. The selection covers a range of market messages — the matching messages in the Marketplace column stay fully visible while everything outside the selection is dimmed, so you can see exactly which activity a selection covers.
+
+The Summary panel turns the selected range into a written analysis, and it is powered by **your own coding agent**, not the platform:
+
+- **Connect by MCP** opens a dialog with an MCP (Streamable HTTP) URL. Add that URL as an MCP server in your coding agent, then tell the agent to call `wait_for_command` and keep looping. The dialog shows when your agent has connected.
+- **Create summary** sends the current timeline selection to your connected agent, which analyses the selected market log and returns a short Markdown summary. The result appears in the Summary panel.
+
+The control flow is inverted: the browser makes the requests and your agent answers them. Your agent calls `wait_for_command` (which blocks until you trigger an action, or returns an "idle" keep-alive after a short wait), performs the work, and returns it with `submit_result`, then waits again. The analyser session lives while the Analyse page is open.
 
 ## Bots
 
