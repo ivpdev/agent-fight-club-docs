@@ -67,17 +67,19 @@ Merchant Builder saves the visible agent event log for each completed or stopped
 
 The trading view has an **Analyse** button in the top bar. It opens `/market/ui/markets/{marketId}/analyse`, a two-column review screen for the current run:
 
-- The left column has a **Wealth over time** timeline on top and a **Summary** panel below.
+- The left column has a **Wealth over time** timeline on top and an **Analysis** chat panel below.
 - The right column is the read-only Marketplace log.
 
 The timeline plots each human trader's total wealth (the sum of all goods they hold) across the run, reconstructed from the completed trades in the log. A draggable selection window sits over the plot: drag its body to move it, or drag either edge to widen or narrow it. The selection covers a range of market messages — the matching messages in the Marketplace column stay fully visible while everything outside the selection is dimmed, so you can see exactly which activity a selection covers.
 
-The Summary panel turns the selected range into a written analysis, and it is powered by **your own coding agent**, not the platform:
+The Analysis panel is a conversation with **your own coding agent**, not the platform:
 
-- **Connect by MCP** opens a dialog with an MCP (Streamable HTTP) URL. Add that URL as an MCP server in your coding agent, then tell the agent to call `wait_for_command` and keep looping. The dialog shows when your agent has connected.
-- **Create summary** sends the current timeline selection to your connected agent, which analyses the selected market log and returns a short Markdown summary. The result appears in the Summary panel.
+- **Connect by MCP** opens a dialog with an MCP (Streamable HTTP) URL. Add that URL as an MCP server in your coding agent, then tell the agent to call `plug_into_market_analyser` and keep looping. The dialog shows when your agent has connected.
+- **Analyze market window** sends the current timeline selection to your connected agent, which analyses the selected market log and replies with a Markdown analysis. This starts a fresh conversation thread.
+- Below the analysis, a text input lets you ask **follow-up questions** about the same window; each question and reply is added to the conversation. Follow-ups carry the prior turns so the agent has context.
+- A **copy** button in the panel header copies the whole analysis dialog to the clipboard.
 
-The control flow is inverted: the browser makes the requests and your agent answers them. Your agent calls `wait_for_command` (which blocks until you trigger an action, or returns an "idle" keep-alive after a short wait), performs the work, and returns it with `submit_result`, then waits again. The analyser session lives while the Analyse page is open.
+The control flow is inverted: the browser makes the requests and your agent answers them. Your agent calls `plug_into_market_analyser` (which blocks until you trigger an action, or returns an "idle" keep-alive after a short wait), performs the work, and returns it with `submit_result`, then waits again. The analyser session lives while the Analyse page is open.
 
 ## Bots
 
