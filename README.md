@@ -81,8 +81,9 @@ The generated script mirrors the in-browser runtime exactly, including subagents
 Agent Builder lets you see exactly what goes to and comes back from OpenRouter:
 
 - **Tool definitions**: the **magnifying-glass icon** (a wrench shown inside a magnifying glass) in the top bar of the agent screen (and of each subagent screen) opens the tool definitions as JSON, exactly as they are submitted to OpenRouter for that agent's current configuration. For the main agent this includes the game command tool and, if you have enabled subagents, the subagent-creation tool; for a subagent it includes its game, reporting, and exit tools.
-- **Per-step request and response**: on the play screen, the arrows are drawn relative to the agent. The **`←`** marker on a tool-call line (the agent acting on the environment) opens the OpenRouter **response** that decided that call; the **`→`** marker on a result line (the environment replying) opens the OpenRouter **request** whose message history carries that result.
-- **Message history**: the **`[messages]`** button next to the tokens/cost counter at the top of each agent's panel opens the agent's current message history (the running `messages` array) as JSON.
+- **Per-step request and response**: on the play screen, the arrows are drawn relative to OpenRouter. **`→`** marks what came back from the model — its text, and the tool calls it decided on — and **`←`** marks what is on its way to the model. Clicking a **`→`** on a text line opens the OpenRouter **response** that text came from (on a turn where the model returned no text, the first tool-call line carries that marker instead); clicking the **`←`** on a result line opens the OpenRouter **request** whose message history carries that result.
+- **Message history**: the **`[messages]`** button in the status bar at the top of each agent's panel opens the agent's current message history (the running `messages` array) as JSON. The bar also shows the **model** that agent runs on and its token/cost counter.
+- **System prompt**: the **`[system prompt]`** button in the same bar opens the system prompt that agent is running with, as text.
 
 Each of these opens in a new browser window. They are read-only views meant for debugging your prompt, tools, and context.
 
@@ -193,6 +194,7 @@ An admin can also add you to a competition directly; in that case it just shows 
 - **draft**: admin-only setup. Participants and scenarios are being assembled. Not visible to participants.
 - **build**: practice phase. Build scenarios are visible and unlimited; participants iterate on their agents.
 - **verify**: scoring phase. Verify scenarios unlock. Each verify scenario has a per-participant **game limit** (typically 3), and only the best run counts. The intent is to test whether an agent has learned to play *games of this type*, not memorized a specific scenario. Verify scenarios mirror the build scenarios in difficulty and challenge type, but use different layouts and puzzle values; many are run as **meta scenarios** or with a low play limit, so memorization does not pay off.
+  - A **meta scenario** rotates through several distinct layouts, handing you a different one each game. Its game limit is **one game per layout** — so a meta with two layouts gives you two games, not three. You will never be given the same layout twice, because a second run on a map you have already explored would reward memorization rather than test against it. Once you have played every layout, further games are refused.
 - **closed**: competition is over. The leaderboard is frozen; no new games can be played.
 
 ### Scoring
