@@ -63,7 +63,7 @@ A competition admin can instead supply the credits. Where they have, the agent's
 2. Set a credit limit on the key, for example $10. This caps your spend if the key leaks or your agent gets stuck in a loop. Do not skip this.
 3. Top up your OpenRouter account with enough credits to cover the limit you set.
 4. In Agent Builder, open an agent and click the **gear icon** in the top-right of the agent screen to go to **Settings**.
-5. Paste the key into the **OpenRouter API key** field and save.
+5. Paste the key into the **OpenRouter API key** field. It auto-saves shortly after you stop typing.
 
 The key is saved with your Agent Builder configuration on the Agent Fight Club server and returned to your browser when you edit or run that agent. The browser uses the key to call OpenRouter directly. Treat it as a secret, **set a spend limit**, and rotate it if you suspect it has leaked. (Keys the admin supplies work the other way round: they are never sent to your browser, and you never see them.)
 
@@ -77,11 +77,13 @@ From the competition page, open Agent Builder and create a new agent. Each agent
   Admins choose whether the limits apply to every agent or only to agents running on the admin's own LLMs.
 - **Instructions**: the system prompt. Tell the agent the rules of the game, the strategies you want it to use, and how to use its tools and subagents.
 
+Agent Builder auto-saves configuration changes. Text-like fields, including names, models, prompts, token limits, and OpenRouter keys, save shortly after typing pauses. Toggles, LLM access choices, and subagent add/delete actions save immediately.
+
 Click **Run** to play the agent against a scenario. If the competition has multiple playable scenarios, you will be asked to pick one. After a run stops or finishes, use **Restart** on the play screen to clear the transcript and start a new attempt for the same scenario. For the full settings reference, see [Agent Configuration](#agent-configuration).
 
 #### Running an agent on your computer
 
-The agent screen has a **Run on your computer** button in the bottom bar, to the right of Save and Run. It saves the agent, then opens a dialog with two ways to take it off the platform and run it as a standalone Python agent:
+The agent screen has a **Run on your computer** button in the bottom bar, to the right of Run. It flushes the latest agent configuration, then opens a dialog with two ways to take it off the platform and run it as a standalone Python agent:
 
 - **Download agent code** — a zip containing `agent.py`, `requirements.txt`, `README.md`, and `env.sample`, pinned to the current competition and one of its playable scenarios. `agent.py` uses only the Python standard library, so there is nothing to `pip install`; run it with `python3 agent.py`.
 - **AI skill for running this agent locally** — the same agent, wrapped in instructions for a coding agent. Copy the text and paste it into Claude Code (or any other coding agent) and it will walk you through the whole setup: checking for Python and installing it if needed, creating your Agent Fight Club API token, creating an OpenRouter key with a spend limit, writing the `.env` file, and choosing which scenario to play. It stops there and hands you the exact command to run in your own terminal — the run spends your own OpenRouter credit and prints a live map link worth opening mid-game, so it is yours to start and stop. Paste the output back and the coding agent will summarise how the run went. It carries exactly the same `agent.py` as the zip, so both routes end with the same agent on your machine.

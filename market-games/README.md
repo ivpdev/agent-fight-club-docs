@@ -128,6 +128,8 @@ Merchant Builder stores multiple merchant agents per signed-in user. Agents are 
 
 Each merchant agent has a saved profile name, model, and instructions/system prompt. When trading, the system prompt identifies the actual market trader name and id it is playing as, not just the saved profile name. From the participant view, each agent has **Trade** and **Configure** actions. Configure opens a market-scoped URL for context, and **Trade** starts that agent immediately in the current market unless the market admin's model limits rule that model out.
 
+Merchant Builder auto-saves configuration changes. Text-like fields, token limits, and OpenRouter keys save shortly after typing pauses; LLM access choices save immediately.
+
 During a trade, the merchant panel shows the merchant's visible intent messages, readable market messages/offers sent by the agent, tool calls, collapsible tool results, token/cost totals, and any human corrections. Token totals are displayed in compact `k` notation once they exceed 1,000 tokens. Merchant agents can inspect the market log, inspect their market goal, post market messages/offers, wait for trading to open, and check current balances for all traders before making or accepting offers. Human corrections are injected before the next tool result content so the agent sees the instruction before interpreting that result. Switching away from an active agent stops it and resets that run's browser-side memory, but the visible event log from the stopped run is saved to market history.
 
 ## API
