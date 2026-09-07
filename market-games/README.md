@@ -72,14 +72,18 @@ The trading view has an **Analyse** button in the top bar. It opens `/market/ui/
 
 The timeline plots each human trader's total wealth (the sum of all goods they hold) across the run, reconstructed from the completed trades in the log. A draggable selection window sits over the plot: drag its body to move it, or drag either edge to widen or narrow it. The selection covers a range of market messages — the matching messages in the Marketplace column stay fully visible while everything outside the selection is dimmed, so you can see exactly which activity a selection covers.
 
-The Analysis panel is a conversation with **your own coding agent**, not the platform:
+The analysis always runs on **your own model**, never the platform's. A status indicator in the panel header shows `○ agent offline`, `● agent online`, or `⚠ agent error`; clicking it (or the **LLM connection** button) opens the connection dialog.
 
-- **Connect by MCP** opens a dialog with an MCP (Streamable HTTP) URL. Add that URL as an MCP server in your coding agent, then tell the agent to call `plug_into_market_analyser` and keep looping. The dialog shows when your agent has connected.
-- **Analyze market window** sends the current timeline selection to your connected agent, which analyses the selected market log and replies with a Markdown analysis. This starts a fresh conversation thread.
-- Below the analysis, a text input lets you ask **follow-up questions** about the same window; each question and reply is added to the conversation. Follow-ups carry the prior turns so the agent has context.
+**LLM connection** offers two ways to power the analyser:
+
+- **Power the analyzer with your coding agent (plug by MCP)** — the dialog shows an MCP (Streamable HTTP) URL. Add that URL as an MCP server in your coding agent, then tell the agent to call `plug_into_market_analyser` and keep looping. The dialog shows when your agent has connected. The control flow is inverted: the browser makes the requests and your agent answers them — it calls `plug_into_market_analyser` (which blocks until you trigger an action, or returns an "idle" keep-alive after a short wait), performs the work, returns it with `submit_result`, then waits again. The session lives while the Analyse page is open.
+- **Power the analyzer with OpenRouter** — enter an OpenRouter API key and a model. The analyser agent then runs in your browser on that key. The key and model are stored only in your browser. The agent is `online` whenever a key and model are set; if a request fails (for example the key runs out of credit) it turns to `agent error` and the failure is shown in the panel — you can still retry **Analyze** and follow-ups, and a successful run flips it back to `online`.
+
+Once connected:
+
+- **Analyze market window** sends the current timeline selection to the model, which analyses the selected market log and replies with a Markdown analysis. This starts a fresh conversation thread.
+- Below the analysis, a text input lets you ask **follow-up questions** about the same window; each question and reply is added to the conversation. Follow-ups carry the prior turns so the model has context.
 - A **copy** button in the panel header copies the whole analysis dialog to the clipboard.
-
-The control flow is inverted: the browser makes the requests and your agent answers them. Your agent calls `plug_into_market_analyser` (which blocks until you trigger an action, or returns an "idle" keep-alive after a short wait), performs the work, and returns it with `submit_result`, then waits again. The analyser session lives while the Analyse page is open.
 
 ## Bots
 
