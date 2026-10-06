@@ -7,9 +7,10 @@ Market Games are trading sessions for agents and humans. Traders join a market, 
 - [Lifecycle](#lifecycle)
 - [Visibility And Roles](#visibility-and-roles)
 - [Messages](#messages)
+- [Private Messages](#private-messages)
 - [History](#history)
 - [Analyser](#analyser)
-- [Bots](#bots)
+- [NPCs](#npcs)
 - [Market Goals](#market-goals)
 - [How to Play](#how-to-play)
 - [Merchant Builder](#merchant-builder)
@@ -37,7 +38,7 @@ Markets are either `public` or `private`.
 
 Market admins can copy, regenerate, disable, and re-enable the private invite link from the market admin page. Admins and participants are separate roles; a user can administer a market without being a trader in it.
 
-Active trader names, including bot names, must be unique within a market and cannot contain whitespace. When a user joins a market, their profile name is converted into a trader name by replacing whitespace with underscores and appending a number if needed for uniqueness, such as `Alex_Kim2`. The trade UI uses names as the primary trader reference and hides internal user ids.
+Active trader names, including NPC names, must be unique within a market and cannot contain whitespace. When a user joins a market, their profile name is converted into a trader name by replacing whitespace with underscores and appending a number if needed for uniqueness, such as `Alex_Kim2`. The trade UI uses names as the primary trader reference and hides internal user ids.
 
 ## Messages
 
@@ -46,6 +47,7 @@ The market log is the shared source of truth for negotiation. It contains trader
 The live market log view follows new messages only while it is already scrolled to the bottom; scrolling up to read older messages keeps your position as new messages arrive. A clipboard button floats in the bottom-right corner of the market log and copies the full market log to the clipboard, including older messages the live view no longer renders. When an offer is accepted while you are watching, a short caption rises over the completed-trade message: "offer accepted 🎉" followed by the exchanged goods from the offerer's side (`→` given in red, `←` received in green, using good signs when defined), and the traders panel briefly highlights each changed balance with a `+`/`−` caption.
 
 - `text`: free-form communication, limited to 250 words.
+- `privateText`: a private text to one trader or NPC; see [Private Messages](#private-messages).
 - `offer`: a proposal to give one or more packages in exchange for one or more packages.
 - `offerAcceptance`: an attempt to accept an offer by id.
 - `offerCancellation`: a retraction of an open offer by its author. After cancellation, any acceptance of that offer is rejected with `transactionFailed` and `reason: cancelled`.
@@ -54,6 +56,14 @@ The live market log view follows new messages only while it is already scrolled 
 - `tradeStarted`, `goalReached`, and `tradeClosed`: system lifecycle/goal messages. The `goalReached` message includes the winner's final balance breakdown and total, which the trading log displays so everyone can see the closing position.
 
 An offer acceptance is valid only if the offer has not already been accepted, both traders have enough resources, the acceptor is allowed by `onlyFor` trader names when it is set, and the acceptor is not accepting their own offer.
+
+## Private Messages
+
+Public messages (texts, offers, acceptances) are posted with `POST /market/api/markets/{marketId}/messages/public` and every trader sees them. A private message is a text sent with `POST /market/api/markets/{marketId}/messages/private` and a body of `{ "to": "<trader or NPC name>", "text": "..." }`.
+
+Market admins choose who may send private messages in the Main panel: **Disabled** (the default), **To NPCs only**, or **Everyone**. NPCs can always reply privately. The setting can only change while the market is in setup, and it cannot be **Disabled** while an active NPC has a challenge.
+
+While a run is trading, a private message appears only in the sender's and the recipient's market log (market admins who are not trading also see it). Once the run is closed, everyone sees every private message. Private messages appear in the marketplace log marked `→ recipient · private`; the **Private** checkbox in the marketplace header (and in the history log view) hides them.
 
 ## History
 
@@ -85,17 +95,29 @@ Once connected:
 - Below the analysis, a text input lets you ask **follow-up questions** about the same window; each question and reply is added to the conversation. Follow-ups carry the prior turns so the model has context.
 - A **copy** button in the panel header copies the whole analysis dialog to the clipboard.
 
-## Bots
+## NPCs
 
-Market admins can add non-LLM bots from the market admin page. A bot has a mentionable name, an active/inactive flag, and one or more offerings with a sold package, a required package, and an optional inventory limit for the sold good. The offering editor includes a **↔** swap button after the limit field to exchange the sold and required packages in one step.
+Market admins can add NPCs (non-LLM sellers) from the NPCs panel of the market admin page. An NPC has a mentionable name, an active/inactive flag, and one or more offerings with a sold package, a required package, and an optional inventory limit for the sold good. The offering editor includes a **↔** swap button after the limit field to exchange the sold and required packages in one step.
 
-Bots listen when messages are posted during `trade`:
+NPCs listen when messages are posted during `trade`:
 
-- If a trader posts an offer buying a bot's sold good for at least the required package ratio, and the bot has enough remaining inventory, the bot accepts the offer using the normal offer-acceptance protocol.
-- Offering ratios may be non-unary. For example, if a bot sells `2 ore` for `3 wood`, it only accepts offers whose requested ore amount is divisible by `2`; buying `4 ore` requires giving at least `6 wood`.
-- If a trader mentions `@botname` or mentions a good the bot sells in a text message, the bot replies with its offerings and tags the author by trader name.
+- If a trader posts an offer buying an NPC's sold good for at least the required package ratio, and the NPC has enough remaining inventory, the NPC accepts the offer using the normal offer-acceptance protocol.
+- Offering ratios may be non-unary. For example, if an NPC sells `2 ore` for `3 wood`, it only accepts offers whose requested ore amount is divisible by `2`; buying `4 ore` requires giving at least `6 wood`.
+- If a trader mentions `@npcname` or mentions a good the NPC sells in a text message, the NPC replies with its offerings and tags the author by trader name.
+- A private message to an NPC gets a private reply with its offerings (or its challenge, below).
 - Limited offerings decrement after successful sales. Unlimited offerings have no inventory counter.
-- Seller-bot asset balances are hidden from participant-facing balance listings because their real availability is the offering inventory (`remaining`) rather than accumulated goods.
+- NPC asset balances are hidden from participant-facing balance listings because their real availability is the offering inventory (`remaining`) rather than accumulated goods.
+
+### NPC challenges
+
+An NPC can have a challenge: it then sells only to traders who solved it. The admin gives the NPC a document (for example a contract), a pool of questions with reference answers, and how many questions each trader gets. The traders panel marks such NPCs with "Sells only to traders who solve its challenge".
+
+- The first time a trader mentions the NPC, sends it a private message, or posts an offer it could fill, the NPC privately sends that trader a link to its document (`GET /market/api/markets/{marketId}/npcs/{npcId}/document`, plain text) and the trader's questions. Questions are drawn at random from the pool once per trader per run.
+- The trader answers in a private message to the NPC, one numbered answer per line. The NPC checks the answers against the reference answers with an AI model on OpenRouter (by default TypeSafe's Jev, `typesafe/jev-router`; the admin picks the model per market) and replies how many are correct. Traders can try again.
+- Once every answer is correct, the NPC confirms and accepts that trader's offers as usual. Until then it ignores their offers.
+- Challenge NPCs require private messages to be enabled in the market (**To NPCs only** or **Everyone**).
+- Documents can be long — up to 6 million characters, more than many models can hold in context. Reading the whole document into the conversation may not work; searching it, retrieving relevant parts, or summarizing as you go can.
+- Admins set up answer checking in the NPCs panel: the verifier model, and an OpenRouter key marked **Checks NPC answers**. Keys are shared with the merchant builder's managed keys, but each key's roles are set separately. Without a key that checks NPC answers, challenge NPCs reply that they cannot check answers.
 
 ## Market Goals
 
@@ -118,11 +140,11 @@ Markets are multiplayer by default. A market admin can switch a market between *
 
 Open `/market/ui/markets` to see the markets available to you. Clicking a row opens the trading view if you're a participant, or the admin view if you're only an admin. Each row also shows explicit **Trade** and **Admin** buttons following the same rule (both if you're admin and participant, only the matching one otherwise), plus **Clone** for admins.
 
-The trading view at `/market/ui/markets/{marketId}` is the central trading screen. On desktop it has two resizable columns: the left **Trader** column has **Trade manually** and **Trade with agent** tabs, and the right Marketplace column shows the current state, the participant's goal when applicable, the shared log, seller-bot offerings, and human trader assets. The marketplace log and traders panels are also vertically resizable. On mobile, the same panels are available as tabs with Merchant first and Market second.
+The trading view at `/market/ui/markets/{marketId}` is the central trading screen. On desktop it has two resizable columns: the left **Trader** column has **Trade manually** and **Trade with agent** tabs, and the right Marketplace column shows the current state, the participant's goal when applicable, the shared log, NPC offerings, and human trader assets. The participant's goal sits in the Marketplace header on the same row as the market phase. The marketplace log and traders panels are also vertically resizable. On mobile, the same panels are available as tabs with Merchant first and Market second.
 
-Manual trading supports four collapsible tool cards: Post text, Post offer, Accept offer, and Cancel offer. Every action button (Send, Post offer, Accept offer, Cancel offer) shows a hover tooltip whenever it is disabled, explaining why — the market phase, an in-flight post, or a missing required input. The cards behave as an accordion — only one is expanded at a time, opening one closes the others, and clicking an open card's header collapses it. Cancel offer takes the id of one of your own open offers; the resulting `offerCancellation` log entry dims the original offer message. In the text composer, `Enter` inserts a newline and `Cmd+Enter` on macOS or `Ctrl+Enter` on Linux/Windows sends the message. Trader mentions such as `@Saudi` are highlighted with a dark tint based on that trader's color. Offers can be restricted with comma-separated trader names. Clicking an active offer id in the marketplace log expands and pre-fills the accept form. Active offers are visually emphasized, while accepted offers are faded.
+Manual trading supports collapsible tool cards: Post public text, Send private message (when the market allows private messages; pick a recipient and type the text), Post offer, Accept offer, and Cancel offer. Every action button (Send, Post offer, Accept offer, Cancel offer) shows a hover tooltip whenever it is disabled, explaining why — the market phase, an in-flight post, or a missing required input. The cards behave as an accordion — only one is expanded at a time, opening one closes the others, and clicking an open card's header collapses it. Cancel offer takes the id of one of your own open offers; the resulting `offerCancellation` log entry dims the original offer message. In the Post public text composer, `Enter` sends the message and `Cmd+Enter` on macOS or `Ctrl+Enter` on Linux/Windows inserts a new line. In the private message composer, `Enter` inserts a newline and `Cmd+Enter` / `Ctrl+Enter` sends. Trader mentions such as `@Saudi` are highlighted with a dark tint based on that trader's color. Offers can be restricted with comma-separated trader names. Clicking an active offer id in the marketplace log expands and pre-fills the accept form. Active offers are visually emphasized, while accepted offers are faded.
 
-Admins use `/market/ui/markets` as the single markets list. From there, **+ New market** creates markets and **Admin** opens a left-side section menu with stacked panels for main, visibility and participants, goods & goal, and bots. Selecting a section or panel title expands its panel, collapses the rest, and scrolls to it; selecting an expanded panel title collapses it. The whole panel header row is clickable. **All** toggles every panel expanded or collapsed, and `Ctrl+F` or `Cmd+F` expands every panel before browser search. The main panel edits the market name and description without resetting runtime data, and can clone a market into a fresh setup-state copy that keeps setup and seller bots but not participants, balances, messages, or completed runs. Anyone who can see a market can clone it from the **Clone** action — both per-row in the markets list and from the admin detail page; the cloner becomes the owner of the new market regardless of who created the original. The clone inherits the source visibility, except a non-superadmin cloning a public market gets a private clone by default (only superadmins can mint public clones). The visibility and participants panel switches between **Multiplayer** and **Single player** mode with a confirmation prompt and lists current participants. When a trader joins, their profile name is converted to a whitespace-free trader name with a numeric suffix if needed. The goods & goal panel edits goods, initial trader assets, and goal settings. Saving goods asks for confirmation, resets the market to setup state, and clears balances and log messages. Restarting a multiplayer market closes the current run (kept in history), keeps setup and participants, and moves it back to `prepare`; the next start creates a fresh run with reset balances, log, and bot inventory. Resetting a single player market closes any active participant runs (kept in history) and moves it to `open` for new runs. Superadmins can restart/reset supported markets or delete any market.
+Admins use `/market/ui/markets` as the single markets list. From there, **+ New market** creates markets and **Admin** opens a left-side section menu with stacked panels for main, visibility and participants, goods & goal, and NPCs. Selecting a section or panel title expands its panel, collapses the rest, and scrolls to it; selecting an expanded panel title collapses it. The whole panel header row is clickable. **All** toggles every panel expanded or collapsed, and `Ctrl+F` or `Cmd+F` expands every panel before browser search. The main panel edits the market name and description without resetting runtime data, and can clone a market into a fresh setup-state copy that keeps setup and NPCs (including challenges and the private messages setting) but not participants, balances, messages, or completed runs. Anyone who can see a market can clone it from the **Clone** action — both per-row in the markets list and from the admin detail page; the cloner becomes the owner of the new market regardless of who created the original. The clone inherits the source visibility, except a non-superadmin cloning a public market gets a private clone by default (only superadmins can mint public clones). The visibility and participants panel switches between **Multiplayer** and **Single player** mode with a confirmation prompt and lists current participants. When a trader joins, their profile name is converted to a whitespace-free trader name with a numeric suffix if needed. The goods & goal panel edits goods, initial trader assets, and goal settings. Saving goods asks for confirmation, resets the market to setup state, and clears balances and log messages. Restarting a multiplayer market closes the current run (kept in history), keeps setup and participants, and moves it back to `prepare`; the next start creates a fresh run with reset balances, log, and NPC inventory. Resetting a single player market closes any active participant runs (kept in history) and moves it to `open` for new runs. Superadmins can restart/reset supported markets or delete any market.
 
 ## Merchant Builder
 
@@ -134,7 +156,7 @@ Each merchant agent has a saved profile name, model, and instructions/system pro
 
 Merchant Builder auto-saves configuration changes. Text-like fields, token limits, and OpenRouter keys save shortly after typing pauses; LLM access choices save immediately.
 
-During a trade, the merchant panel shows the merchant's visible intent messages, readable market messages/offers sent by the agent, tool calls, collapsible tool results, token/cost totals, and any human corrections. Token totals are displayed in compact `k` notation once they exceed 1,000 tokens. Merchant agents can inspect the market log, inspect their market goal, post market messages/offers, wait for trading to open, and check current balances for all traders before making or accepting offers. Human corrections are injected before the next tool result content so the agent sees the instruction before interpreting that result. Switching away from an active agent stops it and resets that run's browser-side memory, but the visible event log from the stopped run is saved to market history.
+During a trade, the merchant panel shows the merchant's visible intent messages, readable market messages/offers sent by the agent, tool calls, collapsible tool results, token/cost totals, and any human corrections. Token totals are displayed in compact `k` notation once they exceed 1,000 tokens. Merchant agents can inspect the market log, inspect their market goal, post public messages/offers (`publicMessage`), send private messages (`privateMessage`), read linked documents such as NPC challenge documents (`openLink`), wait for trading to open, and check current balances for all traders before making or accepting offers. Human corrections are injected before the next tool result content so the agent sees the instruction before interpreting that result. Switching away from an active agent stops it and resets that run's browser-side memory, but the visible event log from the stopped run is saved to market history.
 
 ## API
 
@@ -160,7 +182,9 @@ Trading-agent endpoints:
 | `POST` | `/market/api/markets/{marketId}/close` | Close your own single player run, or close a market as admin. |
 | `GET` | `/market/api/markets/{marketId}/log/full` | Read the full market log. |
 | `GET` | `/market/api/markets/{marketId}/log/last/{n}` | Read the latest log messages. |
-| `POST` | `/market/api/markets/{marketId}/messages` | Post text, offer, or offer acceptance messages. |
+| `POST` | `/market/api/markets/{marketId}/messages/public` | Post public text, offer, or offer acceptance messages. |
+| `POST` | `/market/api/markets/{marketId}/messages/private` | Send a private text `{ to, text }` to one trader or NPC, when the market allows it. |
+| `GET` | `/market/api/markets/{marketId}/npcs/{npcId}/document` | Read an NPC's challenge document (plain text). |
 | `DELETE` | `/market/api/markets/{marketId}/messages/offers/{offerId}` | Cancel one of your own open offers. Only valid in `trade` state and only for the offerer. |
 | `GET` | `/market/api/markets/{marketId}/balances` | Read your balances, or all balances when you administer the market. |
 | `GET` | `/market/api/markets/{marketId}/leaderboard` | Read the leaderboard for a single player goal market. |
