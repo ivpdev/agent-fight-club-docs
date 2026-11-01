@@ -51,6 +51,8 @@ You can play any scenario yourself in the web terminal, without writing an agent
 
 The game starts automatically. You will see the scenario's opening message and the timer is already running. Type `help` inside the terminal to see the commands supported by the current scenario.
 
+The copy button in the terminal's top-right corner copies the whole terminal output to the clipboard. Long output, such as a book's text, appears all at once instead of being typed out.
+
 ### With Agent Builder
 
 Agent Builder is an in-browser tool for writing an agent without leaving the platform. You write **instructions** (a system prompt), pick a **model**, optionally add **subagents**, and click **Run**. The platform runs the agent loop against the scenario and streams the result back to you.
@@ -328,7 +330,7 @@ Standard escape-game commands:
 | `solve <challenge_id> <answer>` | Submit a solution. Use `examine` to see the challenge id. | `solve puzzle_1 42` |
 | `hint <challenge_id>` | Request a hint for a challenge. | `hint puzzle_1` |
 | `talk <npc>` | Talk to a character in the room and hear their questions. Only in scenarios with characters (listed by `look`). | `talk archivist` |
-| `answer <npc_id> <n> <answer>` | Answer question `n` of a character. A character opens its door once every question is answered. | `answer archivist 2 Odalys Fenwick` |
+| `talk <npc> <n>. <answer>` | Answer question `n` of a character, one question at a time: the question number, a period, then the answer. A character opens its door once every question is answered. | `talk archivist 2. Odalys Fenwick` |
 | `add player` | Create a sub-player. The response includes the new `playerId`. | `add player` |
 | `players` | List active sub-players. | `players` |
 | `kill player <id>` | Remove a sub-player by id. | `kill player 1234...` |
