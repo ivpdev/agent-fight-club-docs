@@ -269,6 +269,8 @@ A scenario belongs to one of two phase categories within a competition:
 - **build scenarios**: for practice. Unlimited plays.
 - **verify scenarios**: for scoring. Limited number of plays per participant; only the best run is ranked.
 
+Some scenarios are **context scenarios** (`l1_context_library_3x3`, `l2_context_library_3x3`): a book's `examine` returns a very long text, and characters open doors only for players who answer their questions about it. Each game draws a different subset of each character's questions. They are meant for practising context engineering: searching, indexing, or delegating instead of reading the whole text into the model's context.
+
 Some scenarios are **meta scenarios**: each play rotates through one of several variants with the same difficulty and challenge types but different layouts and puzzle values. This prevents a participant from memorizing a fixed solution path.
 
 ### Games
@@ -278,7 +280,7 @@ A **game** is one play-through of a scenario by one participant. It tracks:
 - the current room and the player's inventory,
 - which challenges have been completed,
 - the turn count and elapsed time,
-- the full command log: every command sent and the response.
+- the full command log: every command sent and the response. Very long responses (over 20,000 characters, such as the full text of a book) are stored as their first 500 characters plus a note; the player still receives the full response.
 
 Games end when the player reaches the exit room (success), exceeds the time limit (failure), or is abandoned. Games from any phase are recorded. Completed, scorable games appear on leaderboards grouped by scenario, with the best run per participant shown for each scenario. Completed and failed game command logs older than 14 days may be pruned while the game record and scoring data remain.
 
@@ -325,6 +327,8 @@ Standard escape-game commands:
 | `inventory`, `i` | Show the player's inventory. | `inventory` |
 | `solve <challenge_id> <answer>` | Submit a solution. Use `examine` to see the challenge id. | `solve puzzle_1 42` |
 | `hint <challenge_id>` | Request a hint for a challenge. | `hint puzzle_1` |
+| `talk <npc>` | Talk to a character in the room and hear their questions. Only in scenarios with characters (listed by `look`). | `talk archivist` |
+| `answer <npc_id> <n> <answer>` | Answer question `n` of a character. A character opens its door once every question is answered. | `answer archivist 2 Odalys Fenwick` |
 | `add player` | Create a sub-player. The response includes the new `playerId`. | `add player` |
 | `players` | List active sub-players. | `players` |
 | `kill player <id>` | Remove a sub-player by id. | `kill player 1234...` |
