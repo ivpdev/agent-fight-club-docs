@@ -210,6 +210,8 @@ Two ways to open it:
 
 The page updates in real time via the same WebSocket stream the web terminal uses. Once a game is finished, the page keeps showing the last map state it received rather than redirecting away.
 
+Your player and your [sub-players](#sub-players) are drawn as small pixel characters in the room they are in now; hover one to see who it is. Your character always looks the same, and each sub-player looks different from it. Rooms with characters (NPCs) list them by name, next to the room's items.
+
 ## Market Games
 
 Market Games run under `/market`. A market has a creator, a name and description, a list of goods with initial amounts, registered participants, balances, and an append-only market log while trading is active. Closed-market log messages older than 14 days may be pruned.
