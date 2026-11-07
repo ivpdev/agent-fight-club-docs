@@ -46,7 +46,7 @@ Check the competition phase before you play. `build` is for practice; `verify` i
 You can play any scenario yourself in the web terminal, without writing an agent. This is useful for exploring the scenario before you automate it.
 
 1. Open the competition and find the scenarios list.
-2. Click **Play manually** next to the scenario you want to try. A new tab opens with the game's web terminal.
+2. Click **Play manually** at the top of the competition page, pick the level you want to try, and click **Play**. A new tab opens with the game's web terminal. The ▶ button next to a scenario in the list does the same for that scenario.
 3. Type commands in the terminal to play. Manual verify games count toward the same per-participant game limits and leaderboard scoring as agent games.
 
 The game starts automatically. You will see the scenario's opening message and the timer is already running. Type `help` inside the terminal to see the commands supported by the current scenario.
@@ -71,10 +71,10 @@ The admin also decides how their keys are shared out: either one key serves ever
 
 The key is saved with your Agent Builder configuration on the Agent Fight Club server and returned to your browser when you edit or run that agent. The browser uses the key to call OpenRouter directly. Treat it as a secret, **set a spend limit**, and rotate it if you suspect it has leaked. (Keys the admin supplies work the other way round: they are never sent to your browser, and you never see them.)
 
-From the competition page, open Agent Builder and create a new agent. Each agent has:
+From the competition page, click **Play with agent**, choose **Agent Builder**, and create a new agent. Each agent has:
 
 - **Name**: your label for the agent.
-- **Model**: any [model identifier OpenRouter accepts](https://openrouter.ai/models), such as `anthropic/claude-sonnet-4.5` or `google/gemini-2.5-flash`. The **ⓘ** button beside the field explains where to find and how to copy a model id.
+- **Model**: any [model identifier OpenRouter accepts](https://openrouter.ai/models), such as `anthropic/claude-sonnet-4.5` or `google/gemini-2.5-flash`. New agents and subagents start with `deepseek/deepseek-v4.1-flash-1017`. The **ⓘ** button beside the field explains where to find and how to copy a model id.
 
   A competition admin can limit which models may be used. They can allow only a named list of models, exclude specific models, allow only free models, or cap the price per million input and output tokens. When any limit is in force for your agent, a red **this competition has model limitations** caption appears next to the field — click it to see exactly what is allowed. Model-id rules are checked as you type; price and free-model rules are checked when the agent runs. If your model is not allowed, **Run** is blocked and tells you why.
 
@@ -87,10 +87,12 @@ Click **Run** to play the agent against a scenario. If the competition has multi
 
 #### Running an agent on your computer
 
+You do not need to build an agent first. On the competition page, **Play with agent → Agent on your computer** opens the **AI skill** described below for a starter agent with the system prompt `Win the game.` and the model `deepseek/deepseek-v4.1-flash-1017`. It has its own page (`/escapegames/ui/competitions/{competitionId}/agent-builder/local-agent`), and both settings are constants at the top of `agent.py` that you can change.
+
 The agent screen has a **Run on your computer** button in the bottom bar, to the right of Run. It flushes the latest agent configuration, then opens a dialog with two ways to take it off the platform and run it as a standalone Python agent:
 
 - **Download agent code** — a zip containing `agent.py`, `requirements.txt`, `README.md`, and `env.sample`, pinned to the current competition and one of its playable scenarios. `agent.py` uses only the Python standard library, so there is nothing to `pip install`; run it with `python3 agent.py`.
-- **AI skill for running this agent locally** — the same agent, wrapped in instructions for a coding agent. Copy the text and paste it into Claude Code (or any other coding agent) and it will walk you through the whole setup: checking for Python and installing it if needed, creating an OpenRouter key with a spend limit, writing the `.env` file, choosing which scenario to play, and writing a code report (see below). Your Agent Fight Club API token is created for you when you open the skill (one per competition, reused next time while it exists in **User Settings**) and is already filled into the `.env` in the text, so keep the text to yourself. If the competition provides LLMs through managed keys, the OpenRouter key step is skipped too: the agent sends its model calls to the competition on Agent Fight Club with your AFC token, and the admin's key pays for them — you just pick the scenario and run. It stops there and hands you the exact command to run in your own terminal — the run spends real credit and prints a live map link worth opening mid-game, so it is yours to start and stop. Paste the output back and the coding agent will summarise how the run went. It carries exactly the same `agent.py` as the zip, so both routes end with the same agent on your machine.
+- **AI skill for running this agent locally** — the same agent, wrapped in instructions for a coding agent. Copy the text and paste it into Claude Code (or any other coding agent) and it will walk you through the whole setup: checking for Python and installing it if needed, creating an OpenRouter key with a spend limit, writing the `.env` file, downloading the agent's files from Agent Fight Club with your API token, and choosing which scenario to play. It does not write the code report (see below) during setup, which keeps the setup to about a minute. Your Agent Fight Club API token is created for you when you open the skill (one per competition, reused next time while it exists in **User Settings**) and is already filled into the `.env` in the text, so keep the text to yourself. If the competition provides LLMs through managed keys, the OpenRouter key step is skipped too: the agent sends its model calls to the competition on Agent Fight Club with your AFC token, and the admin's key pays for them — you just pick the scenario and run. It stops there and hands you the exact command to run in your own terminal — the run spends real credit and prints a live map link worth opening mid-game, so it is yours to start and stop. Paste the output back and the coding agent will summarise how the run went. The `agent.py` it downloads is exactly the one the zip ships, so both routes end with the same agent on your machine.
 
 The button is only shown on desktop-width screens, since setting an agent up locally is not something you would do from a phone.
 
@@ -109,14 +111,14 @@ The first two are deliberate: leaving them out is what keeps `agent.py` a single
 
 When the run ends, `agent.py` reports back to the platform so its games look the same as the ones you play in the browser:
 
-- **Stats** — tokens used, dollar cost, and the settings the run used, shown on the [game log](#game-log) page. The platform only accepts stats for a finished game, so a run that stops early prints `Stats not submitted` instead.
-- **Agent log** — the transcript, under **Agent log** on the same page, alongside the system prompt it ran with. This happens whether or not the agent escaped.
+- **Stats** — tokens used, dollar cost, and the settings the run used, shown on the [game log](#game-log) page. The leaderboard lists tokens and cost per agent, as it does for a multi-agent run in the browser: the game-playing `main` agent, plus a row of its own for every other `agent_id` your code passes to `ask_model` — for example a cheaper model that compacts the history. The platform only accepts stats for a finished game, so a run that stops early prints `Stats not submitted` instead.
+- **Agent log** — the transcript, under **Agent log** on the same page, alongside the system prompt it ran with; lines from such extra agents are filed under them. This happens whether or not the agent escaped.
 
 - **Code report** — after a **won** game only, the `agent-report.html` in the agent's folder, if there is one. The [leaderboard](#scoring) links it next to that game.
 
 All three are best-effort: if a post fails the agent says so and carries on. Delete the `submit_stats`, `submit_agent_log` or `submit_code_report` call in `run_agent` to keep your runs to yourself.
 
-The code report is written by the coding agent when you use the **AI skill**: it is your agent's code with the agent loop, context optimization and memory highlighted and explained. It covers only what your code implements; spotting what is missing is up to you. The skill also leaves an `AGENTS.md` in the folder that tells any later coding-agent session to rewrite the report whenever it changes the code, so the report your winning run uploads matches the code that won. The zip download has no report, so nothing is uploaded unless you add one.
+The code report is written by your coding agent when you use the **AI skill**: it is your agent's code with the agent loop, context optimization and memory highlighted and explained. It covers only what your code implements; spotting what is missing is up to you. The skill leaves an `AGENTS.md` in the folder that has the coding agent write the first report with its first change to the code (or when you ask for one) and rewrite it after every later change, so the report your winning run uploads matches the code that won. A fresh, unchanged setup has no report yet, so a win with it uploads none. The zip download has no report, so nothing is uploaded unless you add one.
 
 The compiled agent plays under its own name on leaderboards — `AGENT_CONTEXT` near the top of `agent.py` is set to `compiled-agent`, so its games get their own row instead of merging with the ones you play from Agent Builder. Change that constant to split your runs up further.
 
@@ -159,6 +161,7 @@ You can use the following endpoints with an API key:
 | `POST` | `/escapegames/api/competitions/{competitionId}/games/{gameId}/attachments` | Optional. Attach files, such as your agent's code report, to a won game; the leaderboard links them. Body: `{ "files": [{ "name", "content" }] }`. |
 | `POST` | `/escapegames/api/competitions/{competitionId}/openrouter/v1/chat/completions` | Where the admin provides LLMs: an OpenRouter-compatible chat completion paid by the admin's key. Point your OpenRouter base URL at `/escapegames/api/competitions/{competitionId}/openrouter/v1` and send your AFC API key in place of an OpenRouter key. |
 | `GET` | `/escapegames/api/competitions/{competitionId}/openrouter/v1/models` | OpenRouter's model list from the same base URL. |
+| `GET` | `/escapegames/api/competitions/{competitionId}/agent-package/{file}` | One file of a local agent setup, as the AI skill downloads it: `agent.py`, `EXPLAIN_CODE.md` or `AGENTS.md`. Add `?agentId=` for one of your saved Agent Builder agents; without it you get the starter agent. |
 
 If the competition page shows model limitations, keep API agents within those same limits. Agent Builder enforces applicable limits before or during a run; API players are expected to follow the competition admin's model policy themselves.
 
@@ -286,6 +289,11 @@ A scenario belongs to one of two phase categories within a competition:
 
 Some scenarios are **context scenarios** (`l1_context_library_3x3`, `l2_context_library_3x3`): a book's `examine` returns a very long text, and characters open doors only for players who answer their questions about it. Each game draws a different subset of each character's questions. They are meant for practising context engineering: searching, indexing, or delegating instead of reading the whole text into the model's context.
 
+The **four-keepers library** comes in two levels. Four characters guard the doors one after another, and each keeps their own long book; together the books are longer than a model's context window. A wrong answer makes that character refuse answers for 60 seconds.
+
+- `l2_keepers_library_3x3`: each character asks only about their own book, and the books stay readable.
+- `l3_search_library_3x3`: also tests memory and search. Once you have answered a character, they lock their book away and `examine` no longer shows its text. The later characters ask about the books of the characters before them, including facts no one asked about yet, so keep notes of what each book says before you answer. The books also never use the characters' words: a search for the words of a question finds only lines about something else, such as another padlock or another town's night watchman. Some facts are corrected later in the book, and the characters want the latest value. Expect to search by meaning, or to read the passages you find, rather than to copy the first match.
+
 Some scenarios are **meta scenarios**: each play rotates through one of several variants with the same difficulty and challenge types but different layouts and puzzle values. This prevents a participant from memorizing a fixed solution path.
 
 ### Games
@@ -343,7 +351,7 @@ Standard escape-game commands:
 | `solve <challenge_id> <answer>` | Submit a solution. Use `examine` to see the challenge id. | `solve puzzle_1 42` |
 | `hint <challenge_id>` | Request a hint for a challenge. | `hint puzzle_1` |
 | `talk <npc>` | Talk to a character in the room and hear their questions. Only in scenarios with characters (listed by `look`). | `talk archivist` |
-| `talk <npc> <n>. <answer>` | Answer question `n` of a character, one question at a time: the question number, a period, then the answer. A character opens its door once every question is answered. | `talk archivist 2. Odalys Fenwick` |
+| `talk <npc> <n>. <answer>` | Answer question `n` of a character, one question at a time: the question number, a period, then the answer. A character opens its door once every question is answered. In some scenarios a wrong answer makes the character refuse answers for a while. | `talk archivist 2. Odalys Fenwick` |
 | `add player` | Create a sub-player. The response includes the new `playerId`. | `add player` |
 | `players` | List active sub-players. | `players` |
 | `kill player <id>` | Remove a sub-player by id. | `kill player 1234...` |
