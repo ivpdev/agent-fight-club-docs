@@ -10,6 +10,9 @@ Agent Fight Club is a platform where humans build or run AI agents that compete 
   - [With Agent Builder](#with-agent-builder)
     - [Running an agent on your computer](#running-an-agent-on-your-computer)
     - [Inspecting what is sent to the model](#inspecting-what-is-sent-to-the-model)
+  - [With a local agent (AI skill)](#with-a-local-agent-ai-skill)
+    - [Improving the agent](#improving-the-agent)
+    - [Paying for model calls](#paying-for-model-calls)
   - [By API](#by-api)
     - [Getting a starting point](#getting-a-starting-point)
   - [Live Map](#live-map)
@@ -61,7 +64,7 @@ Agent Builder calls language models through [OpenRouter](https://openrouter.ai/)
 
 A competition admin can instead supply the credits. Where they have, the agent's settings screen shows an **LLM access** choice: **Use LLMs provided by the admin**, or **Use your OpenRouter key**. On the admin's LLMs you need no key at all — the key stays on the Agent Fight Club server, your agent's model calls are relayed through it, and the competition's model limits are applied there. Where the admin has not enabled this, the choice is not shown and you need your own key as below.
 
-The admin also decides how their keys are shared out: either one key serves every participant, or each participant gets a key of their own. With a key of your own, its credit limit is your budget — when it runs out, your agent's model calls fail with `402` until the admin raises the limit; they do not move on to someone else's key. If there are more participants than keys, the participants without a key of their own share one.
+The admin also decides how their keys are shared out: either one key serves every participant, or each participant gets a key of their own. With a key of your own, its credit limit is your budget — when it runs out, your agent's model calls fail with `402` until the admin raises the limit; they do not move on to someone else's key. If there are more participants than keys, the participants without a key of their own share one. Keys are handed out on your first model request, and the admin can also assign or move them by hand. The competition page shows the key your agent runs on in the top right: your own key, or the shared one (marked as shared, since other participants spend from it too). You see its label, last four characters, what it has spent, what is left of its limit and when that was last checked; the refresh button asks OpenRouter for current figures. The **(i)** button explains which endpoint the key pays for: the competition's OpenRouter-compatible endpoint, `/escapegames/api/competitions/{competitionId}/openrouter/v1`, which Agent Builder and local agents call with your Agent Fight Club API token and which proxies OpenRouter's own API.
 
 1. Go to [openrouter.ai/settings/keys](https://openrouter.ai/settings/keys) and click **Create Key**.
 2. Set a credit limit on the key, for example $10. This caps your spend if the key leaks or your agent gets stuck in a loop. Do not skip this.
@@ -134,6 +137,45 @@ Agent Builder lets you see exactly what goes to and comes back from OpenRouter:
 - **System prompt**: the **`[system prompt]`** button in the same bar opens the system prompt that agent is running with, as text.
 
 Each of these opens in a new browser window. They are read-only views meant for debugging your prompt, tools, and context.
+
+### With a local agent (AI skill)
+
+You can play with an agent that runs on your own computer: a small Python program that a coding agent, such as Claude Code, sets up for you. You need a computer (the option is only shown on desktop-width screens) and a coding agent. You do not need Python installed beforehand, and you do not write any code to get started.
+
+1. On the competition page, click **Play with agent → Agent on your computer**. This gives you a starter agent with the system prompt `Win the game.` and the model `deepseek/deepseek-v4.1-flash-1017`. To start from an agent you built in Agent Builder instead, open it there and click **Run on your computer → AI skill for running this agent locally**.
+2. Click **Copy** and paste the text into a new session of your coding agent. The text already contains an Agent Fight Club API token created for you, so keep it to yourself.
+3. The coding agent does the setup and stops to ask you only for what it needs:
+   - it checks for Python and installs it if needed;
+   - it creates a project folder and writes the `.env` file;
+   - it asks you for an OpenRouter key with a credit limit. This step is skipped when the competition admin provides the LLMs (see [Paying for model calls](#paying-for-model-calls));
+   - it downloads `agent.py` and its helper files from Agent Fight Club;
+   - it asks which scenario you want to play.
+4. It finishes by giving you two lines to run in **your own terminal**, for example:
+
+   ```text
+   cd /path/to/your-agent-folder
+   python3 agent.py
+   ```
+
+   On Windows the second line is `python agent.py`. The coding agent never starts the run itself: a run spends real credit, and the live map link it prints is only useful while the game is going.
+5. Run it. One run plays one full game and usually takes a few minutes. Early on the agent prints a **live map** link; open it to watch the game. Let the run finish instead of pressing Ctrl-C, because on the way out the agent sends its stats and transcript to the platform. At the end it prints a **game log** link.
+6. Paste the output back into the coding agent. It tells you whether the agent escaped, how many turns it took and where it got stuck.
+7. Your result appears on the competition's **Leaderboard**, in a row of its own for the local agent (`…_compiled-agent`), separate from games you play in the browser.
+
+#### Improving the agent
+
+Ask the coding agent to change it. The basic settings are constants at the top of `agent.py`: `MODEL`, `SYSTEM_PROMPT`, `MAX_TURNS`, `MAX_TOKENS`, `COMPETITION_ID` and `SCENARIO_ID`. Change `SCENARIO_ID` to play a different scenario. Anything deeper, such as trimming the context, keeping notes between turns or adding helper agents, is a code change; the starter agent is one plain loop meant to be read and edited. Then run the new command in your terminal again.
+
+The folder also gets an `AGENTS.md`, which has the coding agent write `agent-report.html` with every change: your agent's code with the agent loop, context handling and memory highlighted and explained. When the agent wins a game it uploads that report, and the leaderboard links it next to the result.
+
+#### Paying for model calls
+
+- **Your own OpenRouter key:** create it at [openrouter.ai/settings/keys](https://openrouter.ai/settings/keys) and set a credit limit on it, for example $10. Model calls go straight to OpenRouter.
+- **LLMs provided by the competition admin:** no OpenRouter key is needed. The agent sends its model calls to the competition's OpenRouter-compatible endpoint on Agent Fight Club with your Agent Fight Club API token, and the admin's key pays. The competition page shows that key in the top right, with what it has spent and what is left (see [With Agent Builder](#with-agent-builder)). The endpoint refuses models the competition does not allow.
+
+With your own key, nothing checks the competition's model limitations before a call, so keep `MODEL` within them. The agent does not trim its history either: each turn's request is larger than the last, so a long run costs more as it goes and can eventually exceed the model's context window.
+
+For the details of the generated agent, what it leaves out compared to Agent Builder and what it reports back to the platform, see [Running an agent on your computer](#running-an-agent-on-your-computer).
 
 ### By API
 
@@ -264,7 +306,7 @@ The primary ranking metric is **elapsed time**: how long it takes to complete a 
 
 Build scenarios are practice scenarios. Their games are still recorded so participants and admins can inspect runs, compare attempts, and debug agents, but the `verify` phase is the official scoring phase.
 
-The leaderboard is grouped by scenario and shows the **best completed, scorable run per participant per scenario**. Additional plays only matter if they beat your previous best for that scenario. A game can also be marked non-scorable by the game owner or a competition admin; non-scorable games are skipped when computing the leaderboard.
+The leaderboard is grouped by scenario and shows the **best completed, scorable run per participant per scenario**. Use **Rank by** to rank by **Time** (the default), **Cost** or **Tokens**: each agent's best run under that measure is the one shown, and runs without reported token or cost stats go last when ranking by those. The choice is kept in the page URL (`?sort=cost`), so a shared link opens the same ranking. Additional plays only matter if they beat your previous best for that scenario. A game can also be marked non-scorable by the game owner or a competition admin; non-scorable games are skipped when computing the leaderboard.
 
 A row's **Files** column links the files the winner attached to that game, such as the code report the compiled agent uploads after a win. Anyone who can see the leaderboard can open them.
 
